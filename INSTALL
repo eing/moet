@@ -1,0 +1,52 @@
+This mobile test framework requires the following to be installed:
+
+- python 2.5.2 (if Windows OS install cygwin)
+- device simulator (For BB, install JDE NOT just plain vanilla simulator)
+- ImageMagick 6.5.7-Q8 
+- JDK 6.0
+
+
+To run tests
+1. Set variables in <device>.sh (e..g. bb.sh), according to your env.
+2. source <device>.sh
+3. Run tests using python <test>.py
+
+------------------------- OVERVIEW --------------------------
+
+$TEST_ROOT
+|
+|__README
+|
+|__common : shared library that all applications can use
+|  |__androidlib.py : common android control functions
+|  |__bblib.py      : common blackberry control functions
+|  |__imagelib.py   : image functions use for test verification
+|  |__iphonelib.py  : common iphone control functions
+|  |__logger.py     : logging utility to file $TEST_OUTPUT/run.log
+|  |__testlib.py    : exceptions, env settings, and get device
+|
+|__install   : Place your application install source files here
+|  |__<version> : e.g. 1.1.0
+|     |__ jads, cods, jars (blackberry)
+|
+|__results : Test results $TEST_OUTPUT
+|  |__8300-4.5.0-<date> : results in $DEVICE-$DEVICE_OS-$DATE format
+|
+|__tests : End-to-End tests
+   |__testbase.py : business rules interface class for all devices to implement
+   |__android.py     : android implementation for testbase  
+   |__bb.py          : blackberry implementation for testbase  
+   |__iphone.py      : iphone implementation for testbase  
+   |__bb.sh          : environment settings for tests to run in
+   |__resources      : resources include snapshots, device specific scripts
+   |  |__bb
+   |  |  |__320x240  : similar to $DEVICE_RESOLUTION
+   |  |  |__480x320  : contains all pics of 480x320 resolution
+   |  |
+   |  |__iphone
+   |  |__android
+   |__BAT            : Acceptance tests that can be run for bb, iphone & android
+   |__only_bb        : Tests only applicable on blackberry
+   |__only_iphone    : Tests only applicable on iphone
+   |__only_android   : Tests only applicable on android
+   |__<test function dirs> : Test functions such as search, maps, update, add etc
