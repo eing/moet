@@ -1,20 +1,24 @@
-############################################################################
-# CONFIDENTIAL -- Copyright 2010 Intuit Inc. This material contains certain
-# trade secrets and confidential and proprietary information of Intuit Inc.
-# Use, reproduction, disclosure and distribution by any means are prohibited,
-# except pursuant to a written license from Intuit Inc. Use of copyright
-# notice is precautionary and does not imply publication or disclosure.
-############################################################################
+#
+# Copyright 2010 Intuit, Inc.
+#
+# Licensed under the Eclipse Public License, Version 1.0 (the "License"); you may
+# not use this file except in compliance with the License. Please see the License 
+# for the specific language governing permissions and limitations.
+# You may obtain a copy of the License at
+#
+# http://www.eclipse.org/legal/epl-v10.html
+#
+
+""" 
+    Library containing all Android device common functions. 
+"""
+
 import os
 import testlib
 import logger
 import time
 import telnetlib
 import translate
-
-""" 
-    Library containing all Android device common functions. 
-"""
 
 log = logger.getLogger('androidlib')
 testoutput = testlib.testenv.testoutput

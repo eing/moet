@@ -1,18 +1,22 @@
-############################################################################
-# CONFIDENTIAL -- Copyright 2010 Intuit Inc. This material contains certain
-# trade secrets and confidential and proprietary information of Intuit Inc.
-# Use, reproduction, disclosure and distribution by any means are prohibited,
-# except pursuant to a written license from Intuit Inc. Use of copyright
-# notice is precautionary and does not imply publication or disclosure.
 #
-import os
-import testlib
-import logger
-import time
+# Copyright 2010 Intuit, Inc.
+#
+# Licensed under the Eclipse Public License, Version 1.0 (the "License"); you may
+# not use this file except in compliance with the License. Please see the License 
+# for the specific language governing permissions and limitations.
+# You may obtain a copy of the License at
+#
+# http://www.eclipse.org/legal/epl-v10.html
+#
 
 """ 
     Library containing all BlackBerry device common functions. 
 """
+
+import os
+import testlib
+import logger
+import time
 
 log = logger.getLogger('bblib')
 testoutput = testlib.testenv.testoutput
@@ -404,7 +408,7 @@ def javaloaderStart():
         JavaLoader is used for installing application and taking screenshots
     """
     testroot = testlib.testenv.testroot
-    version = testlib.testenv.cmmVersion
+    version = testlib.testenv.version
     deviceBuild = bbenv.getDeviceBuild()
     rimHomeUnix = testlib.testenv.rimHome
     devicePort =  testlib.testenv.devicePort
@@ -416,7 +420,7 @@ def javaloaderStart():
     rimHomeDos = rimHomeUnix.replace('/','\\\\')
 
     os.system('cat ' + loaderTemplate + "| sed 's/%RIM_HOME%/" + rimHomeDos \
-        + '/g;s/%CMMVersion%/' + testlib.testenv.cmmVersion \
+        + '/g;s/%Version%/' + testlib.testenv.version \
         + '/g;s/%DEVICE_BUILD%/' + deviceBuild \
         + '/g;s/%DEVICE_PORT%/' + devicePort \
         + '/g;s/%DEVICE_PIN%/' + bbenv.getPin() \
@@ -477,13 +481,3 @@ def cleanup():
         return True
     else:
         raise testlib.OSSystemException('Unable to kill simulator process')
-
-
-if __name__ == '__main__':
-    #trackball('up', 2)
-    #backspaces(10)
-    #enterString('8888881132')
-    #trackball('down', 1)
-    #enterString('111111')
-    print enter(False)
-    enter(True)
