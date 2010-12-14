@@ -1,0 +1,76 @@
+Help on module android:
+
+NAME
+    android
+
+FILE
+    /cygdrive/c/moet/examples/android.py
+
+DESCRIPTION
+    # Copyright 2010 Intuit, Inc.
+    #
+    # Licensed under the Eclipse Public License, Version 1.0 (the "License"); you may
+    # not use this file except in compliance with the License. Please see the License 
+    # for the specific language governing permissions and limitations.
+    # You may obtain a copy of the License at
+    #
+    # http://www.eclipse.org/legal/epl-v10.html
+    #
+
+CLASSES
+    appbase.AppInterface
+        AndroidImpl
+    
+    class AndroidImpl(appbase.AppInterface)
+     |  Android implementation of methods specified in interface class.
+     |  
+     |  Methods defined here:
+     |  
+     |  add(self, contact, options=['done'])
+     |      Add contact
+     |  
+     |  delete(self)
+     |      assumes you are in call screen
+     |  
+     |  endcall(self)
+     |      assumes you are in contact detail screen
+     |  
+     |  find(self, term)
+     |  
+     |  launch(self)
+     |      Launch app
+     |  
+     |  phone(self, phone, options='[end]')
+     |      Phone activity
+     |      @param phone phone number to dial
+     |      @param options list of activities after call is placed
+     |  
+     |  screen(self, name='phone')
+     |      Navigate to different screens
+     |      @param name phone, log, contacts, fav
+     |  
+     |  ----------------------------------------------------------------------
+     |  Methods inherited from appbase.AppInterface:
+     |  
+     |  initLogger(self, testname='AddressBook', logfile=None)
+     |      Initialize logger for all tests
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes inherited from appbase.AppInterface:
+     |  
+     |  device = 'android'
+     |  
+     |  testenv = <testlib.testEnv instance>
+     |  
+     |  testoutput = 'c:/moet/results/android-2.8-1'
+     |  
+     |  testroot = 'c:/moet'
+
+DATA
+    altkeys = {'!': 1, '"': 'e', '#': 3, '$': 4, '%': 5, '&': 7, "'": 'd',...
+    keycode = {',': 51, '.': 52, '/': 53, '0': 11, '1': 2, '2': 3, '3': 4,...
+    log = <logging.Logger instance>
+    session = None
+    testoutput = 'c:/moet/results/android-2.8-1'
+
+

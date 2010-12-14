@@ -1,0 +1,64 @@
+Help on module applib:
+
+NAME
+    applib
+
+FILE
+    /cygdrive/c/moet/examples/applib.py
+
+DESCRIPTION
+    # Copyright 2010 Intuit, Inc.
+    #
+    # Licensed under the Eclipse Public License, Version 1.0 (the "License"); you may
+    # not use this file except in compliance with the License. Please see the License 
+    # for the specific language governing permissions and limitations.
+    # You may obtain a copy of the License at
+    #
+    # http://www.eclipse.org/legal/epl-v10.html
+    #
+
+CLASSES
+    Contact
+    
+    class Contact
+     |  Representation of contact
+     |  
+     |  Methods defined here:
+     |  
+     |  __init__(self)
+     |      Default settings for contact
+     |  
+     |  __str__(self)
+     |      Return contact string
+     |  
+     |  clearAll(self)
+     |      Set all attributes to empty strings or default values
+     |  
+     |  getEmail(self)
+     |      Returns contact email
+     |  
+     |  getFirstname(self)
+     |      Returns contact firstname
+     |  
+     |  getLastname(self)
+     |      Returns contact lastname
+     |  
+     |  getPhone(self)
+     |      Returns contact phone
+     |  
+     |  setEmail(self, email)
+     |      Set email
+     |  
+     |  setFirstname(self, firstname)
+     |      Set firstname
+     |  
+     |  setLastname(self, lastname)
+     |      Set lastname
+     |  
+     |  setPhone(self, phone)
+     |      Set phone
+
+DATA
+    log = <logging.Logger instance>
+
+

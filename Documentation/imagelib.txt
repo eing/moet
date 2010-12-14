@@ -1,0 +1,35 @@
+Help on module imagelib:
+
+NAME
+    imagelib
+
+FILE
+    /cygdrive/c/moet/common/imagelib.py
+
+DESCRIPTION
+    Compare tool takes a snapshot of the current image and compare 
+    with the expected image. 
+    (Optional) Cropped settings determines area to compare 
+               There are a few crop options -
+               1. (Preferred - resolution independent) 100%x80%+10%+20% 
+               2. 320x90+0+0 
+               3. +0+90
+    (Optional) Tolerance is the level of error for failing compare
+
+FUNCTIONS
+    compare(device, image, cropSettings=None, tolerance=500)
+        Compare images using cropped settings and tolerance level
+    
+    parseCropSettings(cropSettings, resX, resY)
+        Convert settings in % to actual resolution crop settings, e.g.
+        parseCropSettings('320x90+0+0', '320', '240')
+        parseCropSettings('100%x90%+10%+0', '320', '240')
+        parseCropSettings('320x90%+10+0', '320', '240')
+        parseCropSettings('+10+0', '320', '240')
+        parseCropSettings('320x90', '320', '240')
+        parseCropSettings('+10%+0', '320', '240')
+
+DATA
+    log = <logging.Logger instance>
+
+

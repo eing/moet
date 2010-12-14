@@ -1,0 +1,77 @@
+Help on module storm:
+
+NAME
+    storm
+
+FILE
+    /cygdrive/c/moet/examples/storm.py
+
+DESCRIPTION
+    # Copyright 2010 Intuit, Inc.
+    #
+    # Licensed under the Eclipse Public License, Version 1.0 (the "License"); you may
+    # not use this file except in compliance with the License. Please see the License 
+    # for the specific language governing permissions and limitations.
+    # You may obtain a copy of the License at
+    #
+    # http://www.eclipse.org/legal/epl-v10.html
+    #
+
+CLASSES
+    appbase.AppInterface
+        StormImpl
+    
+    class StormImpl(appbase.AppInterface)
+     |  Storm implementation of the business rule methods
+     |  specified in interface class CMInterface.
+     |  
+     |  Methods defined here:
+     |  
+     |  add(self, contact=None, options='save')
+     |      Add contact
+     |  
+     |  delete(self, execute=True)
+     |      Delete loaded contact
+     |  
+     |  find(self, contact=None, options='save')
+     |      Find contact
+     |  
+     |  getScreenShot(self, image)
+     |      Get screenshot and save as image name. 
+     |      This is required for common\imagelib.py to work.
+     |      @param image : Name of image to save screenshot
+     |  
+     |  launch(self)
+     |      Launch contact manager app
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |  
+     |  log = <logging.Logger instance>
+     |  
+     |  ----------------------------------------------------------------------
+     |  Methods inherited from appbase.AppInterface:
+     |  
+     |  initLogger(self, testname='AddressBook', logfile=None)
+     |      Initialize logger for all tests
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes inherited from appbase.AppInterface:
+     |  
+     |  device = '8130'
+     |  
+     |  testenv = <testlib.testEnv instance>
+     |  
+     |  testoutput = 'c:/moet/results/8130-4.5.0-1'
+     |  
+     |  testroot = 'c:/moet'
+
+DATA
+    batchroot = 'c:/moet/common/bb/'
+    bbenv = <bblib.bbEnv instance>
+    device = '8130'
+    deviceOS = '4.5.0'
+    log = <logging.Logger instance>
+    testoutput = 'c:/moet/results/8130-4.5.0-1'
+
+

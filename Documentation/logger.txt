@@ -1,0 +1,19 @@
+Help on module logger:
+
+NAME
+    logger - Common logging utility
+
+FILE
+    /cygdrive/c/moet/common/logger.py
+
+FUNCTIONS
+    getLogger(classname=None, logfile='/cygdrive/c/moet/results/8130-4.5.0-1/util.log')
+        Initialize logging configuration. 
+        Log file : $TEST_OUTPUT/util.log (default)
+        Log levels : $LOG_LEVEL - ERROR||DEBUG||INFO||WARNING||CRITICAL
+
+DATA
+    LOG_FILENAME = '/cygdrive/c/moet/results/8130-4.5.0-1/util.log'
+    testoutput = '/cygdrive/c/moet/results/8130-4.5.0-1/'
+
+

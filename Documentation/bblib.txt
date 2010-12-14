@@ -1,0 +1,112 @@
+Help on module bblib:
+
+NAME
+    bblib - Library containing all BlackBerry device common functions.
+
+FILE
+    /cygdrive/c/moet/common/bblib.py
+
+CLASSES
+    bbEnv
+    
+    class bbEnv
+     |  This is specific to BlackBerry Environment
+     |  
+     |  Methods defined here:
+     |  
+     |  __init__(self)
+     |  
+     |  getDeviceBuild(self)
+     |      Resets device build.
+     |      @returns 8300 if device is of 320x240 or 83xx, 88xx, 85xx
+     |               8900 if device is of 480x320 or 89xx, 9xxx
+     |  
+     |  getPin(self)
+     |      Returns pin as a string
+     |  
+     |  getPort(self)
+     |      Returns port as a string
+     |  
+     |  incrPin(self)
+     |      Increases pin by 1
+     |  
+     |  incrPort(self)
+     |      Increases pin by 1
+     |  
+     |  setDeviceBuild(self)
+     |      Resets device build.
+     |  
+     |  setPin(self, pin)
+     |      Sets pin
+     |  
+     |  setPort(self, port)
+     |      Sets port
+
+FUNCTIONS
+    backspaces(count=1, execute=True)
+        Press backspaces specified by count. 
+        If execute, run in simulator, otherwise return string.
+    
+    cleanup()
+        Kill processes started during setup
+    
+    enter(string=None, execute=True)
+        Press Enter key in simulator.
+        If execute, run in simulator, otherwise return string.
+    
+    enterString(string, execute=True)
+        Press keystrokes for String in simulator.
+        If execute, run in simulator, otherwise return string.
+    
+    escape(execute=True)
+        Press Escape key in simulator.
+        If execute, run in simulator, otherwise return string.
+    
+    fledgeRun(script, isScript=True)
+        Run fledgecontroller with script or string.
+        isScript = False : open file is needed to write string(script)
+    
+    fledgeStart(deviceVal='8130', deviceOSVal='4.5.0')
+        Start blackBerry simulator
+    
+    javaloaderStart()
+        JavaLoader is used for installing application and taking screenshots
+    
+    mdsStart()
+        Start Mobile Data Service, required for internet connectivity
+    
+    menu(execute=True)
+        Press Menu key in simulator.
+        If execute, run in simulator, otherwise return string.
+    
+    pause(seconds=1, execute=True)
+        Pause simulator specified by seconds.
+        If execute, run pause in simulator, otherwise return string.
+    
+    setDeviceResolution()
+        Sets device resolution
+    
+    simulateDeviceKey(char)
+        Generate device key in simulator
+    
+    thumbwheel(direction='up', count=1, execute=True)
+        Enter thumbwheelrolls specified by count and direction. 
+        If execute, run in simulator, otherwise return string.
+    
+    touch(x, y, execute=True)
+        Run fledgecontroller with touch screen at coordinates (x.y)
+        isScript = False : open file is needed to write string(script)
+    
+    trackball(direction='left', count=1, execute=True)
+        Enter trackball rolls specified by count and direction.
+        If execute, run in simulator, otherwise return string.
+
+DATA
+    batchroot = 'c:/moet/common/bb/'
+    bbenv = <bblib.bbEnv instance>
+    device = '8130'
+    deviceOS = '4.5.0'
+    log = <logging.Logger instance>
+    testoutput = 'c:/moet/results/8130-4.5.0-1'
+
+

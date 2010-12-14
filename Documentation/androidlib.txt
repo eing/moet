@@ -1,0 +1,61 @@
+Help on module androidlib:
+
+NAME
+    androidlib - Library containing all Android device common functions.
+
+FILE
+    /cygdrive/c/moet/common/androidlib.py
+
+FUNCTIONS
+    back()
+        Press back button in simulator
+    
+    backspaces(num=1)
+        Enter backspaces into simulator
+    
+    closeSession()
+        Close telnet session
+    
+    drag(fromX=0, fromY=0, toX=0, toY=0)
+        Move on touch screen from (fromX,fromY) to (toX, toY)
+    
+    enter(string=None)
+        Press enter or enter string in simulator
+    
+    executeKeyEvent(keycode, run=True)
+        Takes event integer keycode and excecute
+    
+    home()
+        Press home key in simulator
+    
+    menu()
+        Press menu key in simulator
+    
+    playback(events='playbackfile')
+        Playback events on simulator
+    
+    record(seconds=5, returnResult=False)
+        Record events on simulator 
+        @param seconds length of recording time in seconds
+    
+    scroll(action='left', num=1)
+        Press cursor keys (up, down, left, right) in simulator
+    
+    startSession(host='localhost', port='5554')
+        Start telnet session into Android simulator.
+        @param host : hostname, default localhost
+        @param port : telnet port, default 5554
+    
+    striplist(l)
+    
+    touch(posX=0, posY=0, action='default')
+        Touch on screen at co-ordinates (posX,posY)
+
+DATA
+    altkeys = {'!': 1, '"': 'e', '#': 3, '$': 4, '%': 5, '&': 7, "'": 'd',...
+    keycode = {',': 51, '.': 52, '/': 53, '0': 11, '1': 2, '2': 3, '3': 4,...
+    log = <logging.Logger instance>
+    session = None
+    testoutput = 'c:/moet/results/android-2.8-1'
+
+

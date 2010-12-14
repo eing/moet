@@ -1,0 +1,221 @@
+Help on module testadd:
+
+NAME
+    testadd
+
+FILE
+    /cygdrive/c/moet/examples/testadd.py
+
+DESCRIPTION
+    # Copyright 2010 Intuit, Inc.
+    #
+    # Licensed under the Eclipse Public License, Version 1.0 (the "License"); you may
+    # not use this file except in compliance with the License. Please see the License 
+    # for the specific language governing permissions and limitations.
+    # You may obtain a copy of the License at
+    #
+    # http://www.eclipse.org/legal/epl-v10.html
+    #
+
+CLASSES
+    unittest.TestCase(__builtin__.object)
+        AddContactTest
+    
+    class AddContactTest(unittest.TestCase)
+     |  Add contact test
+     |  
+     |  Method resolution order:
+     |      AddContactTest
+     |      unittest.TestCase
+     |      __builtin__.object
+     |  
+     |  Methods defined here:
+     |  
+     |  setUp(self)
+     |  
+     |  tearDown(self)
+     |  
+     |  testAddContactWithEmail(self)
+     |  
+     |  testAddContactWithPhone(self)
+     |  
+     |  testAddNoPhoneEmail(self)
+     |  
+     |  testAddPhoneEmail(self)
+     |  
+     |  validate(self, testname=None)
+     |      Verify that add contact succeed by viewing contact details
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |  
+     |  contact = <applib.Contact instance>
+     |  
+     |  device = <pearl.PearlImpl instance>
+     |  
+     |  email = 'test6509876543@t.co.uk'
+     |  
+     |  lastname = 'Regression'
+     |  
+     |  phone = '6501234567'
+     |  
+     |  ----------------------------------------------------------------------
+     |  Methods inherited from unittest.TestCase:
+     |  
+     |  __call__(self, *args, **kwds)
+     |  
+     |  __eq__(self, other)
+     |  
+     |  __hash__(self)
+     |  
+     |  __init__(self, methodName='runTest')
+     |      Create an instance of the class that will use the named test
+     |      method when executed. Raises a ValueError if the instance does
+     |      not have a method with the specified name.
+     |  
+     |  __ne__(self, other)
+     |  
+     |  __repr__(self)
+     |  
+     |  __str__(self)
+     |  
+     |  assertAlmostEqual = failUnlessAlmostEqual(self, first, second, places=7, msg=None)
+     |      Fail if the two objects are unequal as determined by their
+     |      difference rounded to the given number of decimal places
+     |      (default 7) and comparing to zero.
+     |      
+     |      Note that decimal places (from zero) are usually not the same
+     |      as significant digits (measured from the most signficant digit).
+     |  
+     |  assertAlmostEquals = failUnlessAlmostEqual(self, first, second, places=7, msg=None)
+     |      Fail if the two objects are unequal as determined by their
+     |      difference rounded to the given number of decimal places
+     |      (default 7) and comparing to zero.
+     |      
+     |      Note that decimal places (from zero) are usually not the same
+     |      as significant digits (measured from the most signficant digit).
+     |  
+     |  assertEqual = failUnlessEqual(self, first, second, msg=None)
+     |      Fail if the two objects are unequal as determined by the '=='
+     |      operator.
+     |  
+     |  assertEquals = failUnlessEqual(self, first, second, msg=None)
+     |      Fail if the two objects are unequal as determined by the '=='
+     |      operator.
+     |  
+     |  assertFalse = failIf(self, expr, msg=None)
+     |      Fail the test if the expression is true.
+     |  
+     |  assertNotAlmostEqual = failIfAlmostEqual(self, first, second, places=7, msg=None)
+     |      Fail if the two objects are equal as determined by their
+     |      difference rounded to the given number of decimal places
+     |      (default 7) and comparing to zero.
+     |      
+     |      Note that decimal places (from zero) are usually not the same
+     |      as significant digits (measured from the most signficant digit).
+     |  
+     |  assertNotAlmostEquals = failIfAlmostEqual(self, first, second, places=7, msg=None)
+     |      Fail if the two objects are equal as determined by their
+     |      difference rounded to the given number of decimal places
+     |      (default 7) and comparing to zero.
+     |      
+     |      Note that decimal places (from zero) are usually not the same
+     |      as significant digits (measured from the most signficant digit).
+     |  
+     |  assertNotEqual = failIfEqual(self, first, second, msg=None)
+     |      Fail if the two objects are equal as determined by the '=='
+     |      operator.
+     |  
+     |  assertNotEquals = failIfEqual(self, first, second, msg=None)
+     |      Fail if the two objects are equal as determined by the '=='
+     |      operator.
+     |  
+     |  assertRaises = failUnlessRaises(self, excClass, callableObj, *args, **kwargs)
+     |      Fail unless an exception of class excClass is thrown
+     |      by callableObj when invoked with arguments args and keyword
+     |      arguments kwargs. If a different type of exception is
+     |      thrown, it will not be caught, and the test case will be
+     |      deemed to have suffered an error, exactly as for an
+     |      unexpected exception.
+     |  
+     |  assertTrue = failUnless(self, expr, msg=None)
+     |      Fail the test unless the expression is true.
+     |  
+     |  assert_ = failUnless(self, expr, msg=None)
+     |      Fail the test unless the expression is true.
+     |  
+     |  countTestCases(self)
+     |  
+     |  debug(self)
+     |      Run the test without collecting errors in a TestResult
+     |  
+     |  defaultTestResult(self)
+     |  
+     |  fail(self, msg=None)
+     |      Fail immediately, with the given message.
+     |  
+     |  failIf(self, expr, msg=None)
+     |      Fail the test if the expression is true.
+     |  
+     |  failIfAlmostEqual(self, first, second, places=7, msg=None)
+     |      Fail if the two objects are equal as determined by their
+     |      difference rounded to the given number of decimal places
+     |      (default 7) and comparing to zero.
+     |      
+     |      Note that decimal places (from zero) are usually not the same
+     |      as significant digits (measured from the most signficant digit).
+     |  
+     |  failIfEqual(self, first, second, msg=None)
+     |      Fail if the two objects are equal as determined by the '=='
+     |      operator.
+     |  
+     |  failUnless(self, expr, msg=None)
+     |      Fail the test unless the expression is true.
+     |  
+     |  failUnlessAlmostEqual(self, first, second, places=7, msg=None)
+     |      Fail if the two objects are unequal as determined by their
+     |      difference rounded to the given number of decimal places
+     |      (default 7) and comparing to zero.
+     |      
+     |      Note that decimal places (from zero) are usually not the same
+     |      as significant digits (measured from the most signficant digit).
+     |  
+     |  failUnlessEqual(self, first, second, msg=None)
+     |      Fail if the two objects are unequal as determined by the '=='
+     |      operator.
+     |  
+     |  failUnlessRaises(self, excClass, callableObj, *args, **kwargs)
+     |      Fail unless an exception of class excClass is thrown
+     |      by callableObj when invoked with arguments args and keyword
+     |      arguments kwargs. If a different type of exception is
+     |      thrown, it will not be caught, and the test case will be
+     |      deemed to have suffered an error, exactly as for an
+     |      unexpected exception.
+     |  
+     |  id(self)
+     |  
+     |  run(self, result=None)
+     |  
+     |  shortDescription(self)
+     |      Returns a one-line description of the test, or None if no
+     |      description has been provided.
+     |      
+     |      The default implementation of this method returns the first line of
+     |      the specified test method's docstring.
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors inherited from unittest.TestCase:
+     |  
+     |  __dict__
+     |      dictionary for instance variables (if defined)
+     |  
+     |  __weakref__
+     |      list of weak references to the object (if defined)
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes inherited from unittest.TestCase:
+     |  
+     |  failureException = <type 'exceptions.AssertionError'>
+     |      Assertion failed.
+
+

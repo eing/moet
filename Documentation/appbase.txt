@@ -1,0 +1,54 @@
+Help on module appbase:
+
+NAME
+    appbase
+
+FILE
+    /cygdrive/c/moet/examples/appbase.py
+
+DESCRIPTION
+    # Copyright 2010 Intuit, Inc.
+    #
+    # Licensed under the Eclipse Public License, Version 1.0 (the "License"); you may
+    # not use this file except in compliance with the License. Please see the License 
+    # for the specific language governing permissions and limitations.
+    # You may obtain a copy of the License at
+    #
+    # http://www.eclipse.org/legal/epl-v10.html
+    #
+
+CLASSES
+    AppInterface
+    
+    class AppInterface
+     |  Application interface for all devices to implement
+     |  
+     |  Methods defined here:
+     |  
+     |  add(self, contact, options='save')
+     |      Add contact
+     |  
+     |  delete(self, execute=True)
+     |      Delete loaded contact
+     |  
+     |  find(self, contact=None, options=None)
+     |      Find contact
+     |  
+     |  initLogger(self, testname='AddressBook', logfile=None)
+     |      Initialize logger for all tests
+     |  
+     |  launch(self)
+     |      Launch application
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |  
+     |  device = '8130'
+     |  
+     |  testenv = <testlib.testEnv instance>
+     |  
+     |  testoutput = 'c:/moet/results/8130-4.5.0-1'
+     |  
+     |  testroot = 'c:/moet'
+
+
