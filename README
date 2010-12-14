@@ -1,0 +1,23 @@
+////////////////////////////////////////////
+
+    MOET - (MO)bile (E)nd-to-end (T)est
+
+////////////////////////////////////////////
+
+"moet" contains libraries for mobile simulators (Blackberry, Android so far)
+to control behavior of the simulator and your mobile application using a common
+python scripting environment. Mobile demos and tests can be built easily without
+dealing with how each device simulator is implemented. This will not incur any 
+costs such as acquiring a device and at the same time, achieve high quality of 
+native mobile applications.
+
+Tests are written such that they can be reused and run against any devices. 
+This is done by identifying customer use cases such as login, search, create 
+contact etc. and each use case will utilize the simulator library controls. 
+Device simulator type (BB/Android/iPhone) is determined at runtime, 
+based on the environment setting.
+
+Depending on the device support, tests may even execute with the device in 
+addition to the simulator.
+
+Please read the file INSTALL for installation and usage instructions.
