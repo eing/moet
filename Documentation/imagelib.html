@@ -1,0 +1,54 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module imagelib</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>imagelib</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/cygdrive/c/moet/common/imagelib.py">/cygdrive/c/moet/common/imagelib.py</a></font></td></tr></table>
+    <p><tt>Compare&nbsp;tool&nbsp;takes&nbsp;a&nbsp;snapshot&nbsp;of&nbsp;the&nbsp;current&nbsp;image&nbsp;and&nbsp;compare&nbsp;<br>
+with&nbsp;the&nbsp;expected&nbsp;image.&nbsp;<br>
+(Optional)&nbsp;Cropped&nbsp;settings&nbsp;determines&nbsp;area&nbsp;to&nbsp;compare&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;There&nbsp;are&nbsp;a&nbsp;few&nbsp;crop&nbsp;options&nbsp;-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.&nbsp;(Preferred&nbsp;-&nbsp;resolution&nbsp;independent)&nbsp;100%x80%+10%+20%&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.&nbsp;320x90+0+0&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.&nbsp;+0+90<br>
+(Optional)&nbsp;Tolerance&nbsp;is&nbsp;the&nbsp;level&nbsp;of&nbsp;error&nbsp;for&nbsp;failing&nbsp;compare</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="logger.html">logger</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
+</td><td width="25%" valign=top><a href="shutil.html">shutil</a><br>
+</td><td width="25%" valign=top><a href="testlib.html">testlib</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-compare"><strong>compare</strong></a>(device, image, cropSettings<font color="#909090">=None</font>, tolerance<font color="#909090">=500</font>)</dt><dd><tt>Compare&nbsp;images&nbsp;using&nbsp;cropped&nbsp;settings&nbsp;and&nbsp;tolerance&nbsp;level</tt></dd></dl>
+ <dl><dt><a name="-parseCropSettings"><strong>parseCropSettings</strong></a>(cropSettings, resX, resY)</dt><dd><tt>Convert&nbsp;settings&nbsp;in&nbsp;%&nbsp;to&nbsp;actual&nbsp;resolution&nbsp;crop&nbsp;settings,&nbsp;e.g.<br>
+<a href="#-parseCropSettings">parseCropSettings</a>('320x90+0+0',&nbsp;'320',&nbsp;'240')<br>
+<a href="#-parseCropSettings">parseCropSettings</a>('100%x90%+10%+0',&nbsp;'320',&nbsp;'240')<br>
+<a href="#-parseCropSettings">parseCropSettings</a>('320x90%+10+0',&nbsp;'320',&nbsp;'240')<br>
+<a href="#-parseCropSettings">parseCropSettings</a>('+10+0',&nbsp;'320',&nbsp;'240')<br>
+<a href="#-parseCropSettings">parseCropSettings</a>('320x90',&nbsp;'320',&nbsp;'240')<br>
+<a href="#-parseCropSettings">parseCropSettings</a>('+10%+0',&nbsp;'320',&nbsp;'240')</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>log</strong> = &lt;logging.Logger instance&gt;</td></tr></table>
+</body></html>

@@ -1,0 +1,62 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module androidlib</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>androidlib</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/cygdrive/c/moet/common/androidlib.py">/cygdrive/c/moet/common/androidlib.py</a></font></td></tr></table>
+    <p><tt>Library&nbsp;containing&nbsp;all&nbsp;Android&nbsp;device&nbsp;common&nbsp;functions.</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="logger.html">logger</a><br>
+<a href="os.html">os</a><br>
+</td><td width="25%" valign=top><a href="telnetlib.html">telnetlib</a><br>
+<a href="testlib.html">testlib</a><br>
+</td><td width="25%" valign=top><a href="time.html">time</a><br>
+<a href="translate.html">translate</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-back"><strong>back</strong></a>()</dt><dd><tt>Press&nbsp;back&nbsp;button&nbsp;in&nbsp;simulator</tt></dd></dl>
+ <dl><dt><a name="-backspaces"><strong>backspaces</strong></a>(num<font color="#909090">=1</font>)</dt><dd><tt>Enter&nbsp;backspaces&nbsp;into&nbsp;simulator</tt></dd></dl>
+ <dl><dt><a name="-closeSession"><strong>closeSession</strong></a>()</dt><dd><tt>Close&nbsp;telnet&nbsp;session</tt></dd></dl>
+ <dl><dt><a name="-drag"><strong>drag</strong></a>(fromX<font color="#909090">=0</font>, fromY<font color="#909090">=0</font>, toX<font color="#909090">=0</font>, toY<font color="#909090">=0</font>)</dt><dd><tt>Move&nbsp;on&nbsp;touch&nbsp;screen&nbsp;from&nbsp;(fromX,fromY)&nbsp;to&nbsp;(toX,&nbsp;toY)</tt></dd></dl>
+ <dl><dt><a name="-enter"><strong>enter</strong></a>(string<font color="#909090">=None</font>)</dt><dd><tt>Press&nbsp;enter&nbsp;or&nbsp;enter&nbsp;string&nbsp;in&nbsp;simulator</tt></dd></dl>
+ <dl><dt><a name="-executeKeyEvent"><strong>executeKeyEvent</strong></a>(keycode, run<font color="#909090">=True</font>)</dt><dd><tt>Takes&nbsp;event&nbsp;integer&nbsp;keycode&nbsp;and&nbsp;excecute</tt></dd></dl>
+ <dl><dt><a name="-home"><strong>home</strong></a>()</dt><dd><tt>Press&nbsp;home&nbsp;key&nbsp;in&nbsp;simulator</tt></dd></dl>
+ <dl><dt><a name="-menu"><strong>menu</strong></a>()</dt><dd><tt>Press&nbsp;menu&nbsp;key&nbsp;in&nbsp;simulator</tt></dd></dl>
+ <dl><dt><a name="-playback"><strong>playback</strong></a>(events<font color="#909090">='playbackfile'</font>)</dt><dd><tt>Playback&nbsp;events&nbsp;on&nbsp;simulator</tt></dd></dl>
+ <dl><dt><a name="-record"><strong>record</strong></a>(seconds<font color="#909090">=5</font>, returnResult<font color="#909090">=False</font>)</dt><dd><tt>Record&nbsp;events&nbsp;on&nbsp;simulator&nbsp;<br>
+@param&nbsp;seconds&nbsp;length&nbsp;of&nbsp;recording&nbsp;time&nbsp;in&nbsp;seconds</tt></dd></dl>
+ <dl><dt><a name="-scroll"><strong>scroll</strong></a>(action<font color="#909090">='left'</font>, num<font color="#909090">=1</font>)</dt><dd><tt>Press&nbsp;cursor&nbsp;keys&nbsp;(up,&nbsp;down,&nbsp;left,&nbsp;right)&nbsp;in&nbsp;simulator</tt></dd></dl>
+ <dl><dt><a name="-startSession"><strong>startSession</strong></a>(host<font color="#909090">='localhost'</font>, port<font color="#909090">='5554'</font>)</dt><dd><tt>Start&nbsp;telnet&nbsp;session&nbsp;into&nbsp;Android&nbsp;simulator.<br>
+@param&nbsp;host&nbsp;:&nbsp;hostname,&nbsp;default&nbsp;localhost<br>
+@param&nbsp;port&nbsp;:&nbsp;telnet&nbsp;port,&nbsp;default&nbsp;5554</tt></dd></dl>
+ <dl><dt><a name="-striplist"><strong>striplist</strong></a>(l)</dt></dl>
+ <dl><dt><a name="-touch"><strong>touch</strong></a>(posX<font color="#909090">=0</font>, posY<font color="#909090">=0</font>, action<font color="#909090">='default'</font>)</dt><dd><tt>Touch&nbsp;on&nbsp;screen&nbsp;at&nbsp;co-ordinates&nbsp;(posX,posY)</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>altkeys</strong> = {'!': 1, '"': 'e', '#': 3, '$': 4, '%': 5, '&amp;': 7, "'": 'd', '(': 9, ')': 0, '*': 8, ...}<br>
+<strong>keycode</strong> = {',': 51, '.': 52, '/': 53, '0': 11, '1': 2, '2': 3, '3': 4, '4': 5, '5': 6, '6': 7, ...}<br>
+<strong>log</strong> = &lt;logging.Logger instance&gt;<br>
+<strong>session</strong> = None<br>
+<strong>testoutput</strong> = 'c:/moet/results/android-2.8-1'</td></tr></table>
+</body></html>

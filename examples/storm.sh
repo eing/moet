@@ -32,6 +32,7 @@ export nodosfilewarning=true
 # Create test output directory if it does not exist
 export FULL_DEVICE=$DEVICE-$DEVICE_OS
 export folder=`date +%m%d20%y-%s`
+export folder=1
 
 if [ ! -e $TEST_ROOT/results ]
 then

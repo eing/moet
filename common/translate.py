@@ -1,14 +1,15 @@
 #
 # Copyright 2010 Intuit, Inc.
 #
-# Licensed under the Eclipse Public License, Version 1.0 (the "License"); you may
-# not use this file except in compliance with the License. Please see the License 
-# for the specific language governing permissions and limitations.
-# You may obtain a copy of the License at
+# Licensed under the Eclipse Public License, Version 1.0 (the "License"); 
+# you may not use this file except in compliance with the License. Please 
+# see the License for the specific language governing permissions and 
+# limitations. You may obtain a copy of the License at
 #
 # http://www.eclipse.org/legal/epl-v10.html
 #
 
+def translate(inputString):
 """
    Utility for androidlib.py. 
    Translates an list of adb getevents to adb sendevent for playback
@@ -16,8 +17,6 @@
       Input  : /dev/input/event0: 0001 00e5 00000001
       Output : sendevent /dev/input/event0 1 229 1
 """
-
-def translate(inputString):
     colonSplit = inputString.split(':')
     if len(colonSplit) < 2:
         return ''
