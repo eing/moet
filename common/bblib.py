@@ -14,16 +14,25 @@
 """
 
 import os
-import testlib
-import logger
 import time
 
-log = logger.getLogger('bblib')
-testoutput = testlib.testenv.testoutput
-batchroot = testlib.testenv.testroot + '/common/bb/'
-device = testlib.testenv.getDevice()
-deviceOS = testlib.testenv.deviceOS
+try:
+    import testlib
+    batchroot = testlib.testenv.testroot + '/common/bb/'
+    device = testlib.testenv.getDevice()
+    deviceOS = testlib.testenv.deviceOS
+except:
+    batchroot = './common/bb/'
+    device = '8300'
+    deviceOS = '5.0.0'
+    testoutput = '.'
+    outfilepath = testoutput + '/fledgeRun8300.bat'
+    outfile = open(outfilepath, 'w+')
+    outfile.write('@ECHO OFF\n')
+    outfile.write('call fledgecontroller.exe <%1\n')
+    outfile.close() 
 
+    
 def setDeviceResolution():
     """ Sets device resolution """
     if device.startswith('95'):
@@ -96,8 +105,11 @@ class bbEnv:
             self.build = '8300'
 
 
-
-bbenv = bbEnv()
+try:
+    bbenv = bbEnv()
+except:
+    print 'BlackBerry environment settings missing, but no worries' 
+    print 'just copy bblib.py to same folder as fledgecontroller.exe'
 
 
 def backspaces(count=1, execute=True):
@@ -108,7 +120,6 @@ def backspaces(count=1, execute=True):
     if not isinstance(count, int):
         return
 
-    log.debug('Entering %d backspaces' % count)
     if execute:
         outfilepath = testoutput + '/backspaces.fct'
         outfile = open(outfilepath, 'w+')
@@ -137,7 +148,6 @@ def thumbwheel(direction='up', count=1, execute=True):
         If execute, run in simulator, otherwise return string.
     """
 
-    log.debug('Entering %d %s thumbwheelrolls' % (count, direction))
     deviceStr = ''
     if direction == 'up':
         direction = '-1'
@@ -162,7 +172,6 @@ def trackball(direction='left', count=1, execute=True):
         If execute, run in simulator, otherwise return string.
     """
 
-    log.debug('Entering %d %s trackballrolls' % (count, direction))
     deviceStr = ''
     directionX = '0' 
     directionY = '0' 
@@ -252,8 +261,6 @@ def enterString(string, execute=True):
     outfilepath = testoutput + '/string.fct'
     outfile = open(outfilepath, 'w+')
 
-    deviceOS = testlib.testenv.deviceOS
-    device = testlib.testenv.device
     if not deviceOS.startswith('4.2') and not device.startswith('83'):
         deviceStr = 'StringInjection(' + string + ')\nPause(1)\n' 
         if execute:
@@ -331,12 +338,14 @@ def pause(seconds=1, execute=True):
 
 def mdsStart():
     """ Start Mobile Data Service, required for internet connectivity """
-    log.debug('Starting MDS')
-    os.system('pushd ' + testlib.testenv.rimHome + '/' \
-        + testlib.testenv.deviceOS + '/MDS; cmd /C run.bat')
+    try:
+        rimHome = testlib.testenv.rimHome
+    except:
+        rimHome = '..'
+    os.system('pushd ' + rimHome + '/' \
+        + deviceOS + '/MDS; cmd /C run.bat')
     time.sleep(5)
     result = os.popen('ps -aW|grep java').readline()
-    log.info('MDS: ' + result)
     if not(result):
         raise testlib.SetupException('MDS start failed')
     else:
@@ -345,7 +354,6 @@ def mdsStart():
 
 def fledgeStart(deviceVal=device, deviceOSVal=deviceOS):
     """ Start blackBerry simulator """
-    log.info('Starting Fledge')
     if deviceVal <> device : 
         bbenv.incrPort()
         bbenv.incrPin()
@@ -395,7 +403,6 @@ def fledgeStart(deviceVal=device, deviceOSVal=deviceOS):
 
     # Verify simulator starts successfully
     result = os.popen('ps -aW|grep fledge').readline()
-    log.info('Fledge: ' + result)
     if not(result):
         raise testlib.SetupException('Fledge start failed')
     else:
@@ -446,7 +453,6 @@ def fledgeRun(script, isScript=True):
         os.system('pushd ' + testoutput + ';cmd /C fledgeRun' + \
             device + '.bat ' + outfilepath )
     else:
-        log.debug('Running flege controller with ' + script)
         os.system('pushd ' + testoutput + ';cmd /C fledgeRun' + \
             device + '.bat ' + script )
 
@@ -475,9 +481,9 @@ def cleanup():
     if not(result):
         return True
     else:
-        raise testlib.OSSystemException('Unable to kill MDS process')
+        print 'Unable to kill MDS process'
     result = os.popen('ps -aW|grep fledge').readline()
     if not(result):
         return True
     else:
-        raise testlib.OSSystemException('Unable to kill simulator process')
+        print 'Unable to kill simulator process'

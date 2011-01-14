@@ -14,14 +14,10 @@
 """
 
 import os
-import testlib
-import logger
 import time
 import telnetlib
 import translate
 
-log = logger.getLogger('androidlib')
-testoutput = testlib.testenv.testoutput
 session = None
 keycode = { \
     "1"         : 2, \
@@ -113,7 +109,6 @@ def executeKeyEvent(keycode, run=True):
     """ Takes event integer keycode and excecute"""
     cmd = 'sendevent /dev/input/event0 1 ' + str(keycode) + ' 1;' \
         + 'sendevent /dev/input/event0 1 ' + str(keycode) + ' 0;' 
-    log.debug(cmd)
     if run:
         cmd = 'adb shell "' + cmd + '"' 
         os.system(cmd)
@@ -227,16 +222,12 @@ def touch(posX=0, posY=0, action='default'):
         + 'sendevent /dev/input/event0 1 330 0;' \
         + 'sendevent /dev/input/event0 0 0 0'
     if action == 'down':
-        log.debug('Hold touch at co-ordinates %s, %s' % (posX, posY))
         cmd = cmd + touch
     elif action == 'up':
-        log.debug('Release touch at co-ordinates %s, %s' % (posX, posY))
         cmd = cmd + release
     else:
-        log.debug('Touch-n-Release at co-ordinates %s, %s' % (posX, posY))
         cmd = cmd + touch + release
     cmd = cmd + '"' 
-    log.debug(cmd)
     os.system(cmd)
 
 
@@ -244,7 +235,6 @@ def drag(fromX=0, fromY=0, toX=0, toY=0):
     """ 
         Move on touch screen from (fromX,fromY) to (toX, toY)
     """
-    log.debug('Drag from %s,%s to %s,%s' % (str(fromX), str(fromY), str(toX), str(toY)))
     release = 'adb shell sendevent /dev/input/event0 0 0 0'
     os.system(release)
 
@@ -303,7 +293,6 @@ def record(seconds=5, returnResult=False):
     pidFileHandle = open(pidfile, 'r')
     pid = pidFileHandle.read(20).split()[0]
     pidFileHandle.close()
-    log.debug('adb pid is ' + pid)
     print('... recording stopped')
     os.system('kill -9 ' + pid)
 
@@ -377,7 +366,6 @@ def playback(events='playbackfile'):
             cmd = cmd + '"'
             if menuKey :
                 time.sleep(5)
-            log.debug(cmd + '\n')
             os.system(cmd)
             cmd = cmdshell
             count = 0
@@ -387,6 +375,5 @@ def playback(events='playbackfile'):
     # run the last command
     if len(cmd) > len(cmdshell):
         cmd = cmd + '"'
-        log.debug(cmd + '\n')
         os.system(cmd)
         time.sleep(3)

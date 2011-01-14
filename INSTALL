@@ -5,6 +5,10 @@ This mobile test framework requires the following to be installed:
 - ImageMagick 6.5.7-Q8 (if using image verification imagelib.py) 
 - JDK 6.0
 
+To use bblib.py and androidlib.py
+1. Run emulator, and python 
+2. For blackberry, in python shell: from bblib.py import *
+3. For android, in python shell: from androidlib.py import *
 
 To run tests
 1. Set variables in <device>.sh (e..g. bb.sh), according to your env.
