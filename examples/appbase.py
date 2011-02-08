@@ -9,22 +9,32 @@
 # http://www.eclipse.org/legal/epl-v10.html
 #
 
-import os
-import testlib
-import logger
-
 class AppInterface:
     """ Application interface for all devices to implement """
 
-    # Environment variables
-    testenv = testlib.testenv
-    testroot = testenv.testroot
-    testoutput = testenv.testoutput
-    device = testenv.device
-
     def initLogger(self, testname='AddressBook', logfile=None):
         """ Initialize logger for all tests """
-        self.log = logger.getLogger(testname, logfile)
+        try:
+            import testlib
+            import logger
+            testenv = testlib.testenv
+            testroot = testenv.testroot
+            testoutput = testenv.testoutput
+            device = testenv.device
+            self.log = logger.getLogger(testname, logfile)
+        except:
+            # Create app.log with DEBUG log level
+            logfile="app.log"
+            if not os.path.exists(logfile):
+                logfileIO = open(logfile, 'a')
+                logfileIO.close()
+            self.log = logging.getLogger(logfile)
+            fileHandler = logging.FileHandler(logfile)
+            formatter = logging.Formatter(\
+                "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+            fileHandler.setFormatter(formatter)
+            self.log.addHandler(fileHandler)
+            self.log.setLevel(logging.DEBUG)
         return self.log
 
     def launch(self):

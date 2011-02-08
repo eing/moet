@@ -13,7 +13,6 @@ import os
 import time
 import applib
 import appbase
-import testlib
 from androidlib import *
 
 
@@ -21,6 +20,9 @@ class AndroidImpl(appbase.AppInterface):
     """
         Android implementation of methods specified in interface class.
     """
+
+    def getScreenShot(self, file):
+        screenshot(file)
 
     def launch(self):
         """ Launch app """

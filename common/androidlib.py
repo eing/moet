@@ -18,6 +18,12 @@ import time
 import telnetlib
 import translate
 
+serialnum=os.getenv('ANDROID_SERIAL')
+ADB='adb '
+flushBuffer=False
+if not serialnum is None:
+    ADB='adb -s ' + serialnum + ' '
+    flushBuffer=True
 session = None
 keycode = { \
     "1"         : 2, \
@@ -110,14 +116,14 @@ def executeKeyEvent(keycode, run=True):
     cmd = 'sendevent /dev/input/event0 1 ' + str(keycode) + ' 1;' \
         + 'sendevent /dev/input/event0 1 ' + str(keycode) + ' 0;' 
     if run:
-        cmd = 'adb shell "' + cmd + '"' 
+        cmd = ADB + 'shell "' + cmd + '"' 
         os.system(cmd)
     else:
         return cmd;
 
 def backspaces(num=1):
     """ Enter backspaces into simulator """
-    startcmd = 'adb shell "' 
+    startcmd = ADB + 'shell "' 
     cmd = startcmd
     deleteKey = str(keycode['delete'])
     count = 0
@@ -153,7 +159,7 @@ def enter(string=None):
     if string is None:
         executeKeyEvent(keycode['enter'])
     else:
-        startcmd = 'adb shell "' 
+        startcmd = ADB + '-d shell "' 
         cmd = ''
         size = len(string)
         i = 0 
@@ -174,12 +180,25 @@ def enter(string=None):
              runCount = runCount - 1
              if runCount == 0:
                  cmd = startcmd + cmd + '"'
+                 print cmd
                  os.system(cmd)
                  cmd = ''
                  runCount = 6
         if cmd <> '' :
             cmd = startcmd + cmd + '"'
+            print cmd
             os.system(cmd)
+
+        j = 10
+        allcmd=''
+        while (j > 0):
+            j=j-1
+            cmd="sendevent /dev/input/event1 3 0 0;sendevent /dev/input/event1 0 0 0;"
+            allcmd=allcmd + cmd 
+            if (j == 1):
+                allcmd = startcmd + allcmd + '"'
+                print allcmd
+                os.system(allcmd)
 
         # This used to work in 2.7
         #startSession()
@@ -189,7 +208,7 @@ def enter(string=None):
 def scroll(action='left', num=1):
     """ Press cursor keys (up, down, left, right) in simulator """
     runCount = 6
-    startcmd = 'adb shell "' 
+    startcmd = ADB + 'shell "' 
     cmd = ''
     while num > 0:
         if action in ['up', 'down', 'left', 'right']:
@@ -212,7 +231,7 @@ def touch(posX=0, posY=0, action='default'):
     """
     posX = str(posX)
     posY = str(posY)
-    cmd = 'adb shell "'
+    cmd = ADB + 'shell "'
     touch = \
         'sendevent /dev/input/event0 3 0 ' + posX + ';' \
         + 'sendevent /dev/input/event0 3 1 ' + posY + ';' \
@@ -235,10 +254,10 @@ def drag(fromX=0, fromY=0, toX=0, toY=0):
     """ 
         Move on touch screen from (fromX,fromY) to (toX, toY)
     """
-    release = 'adb shell sendevent /dev/input/event0 0 0 0'
+    release = ADB + 'shell sendevent /dev/input/event0 0 0 0'
     os.system(release)
 
-    cmd = 'adb shell "' \
+    cmd = ADB + 'shell "' \
         + 'sendevent /dev/input/event0 3 0 ' + str(fromX) + ';' \
         + 'sendevent /dev/input/event0 3 1 ' + str(fromY) + ';' \
         + 'sendevent /dev/input/event0 1 330 1;' \
@@ -283,13 +302,18 @@ def record(seconds=5, returnResult=False):
     # Start recording i.e. get events
     eventsfile = 'recordfile'
     os.system('> ' + eventsfile)
-    os.system('adb shell getevent >& ' + eventsfile + ' &')
+    os.system(ADB + 'shell getevent >& ' + eventsfile + ' &')
     time.sleep(seconds)
 
     # Kill recorder after time elapsed
     pidfile = 'pidfile'
-    #os.system('ps -s | grep adb >& ' + pidfile)
-    os.system('ps | grep "adb shell" >& ' + pidfile)
+
+    # This is for cygwin
+    pscmd='ps -s '
+    if os.system(pscmd + ' >& /dev/null') > 0:
+        # For mac or unix
+        pscmd='ps '
+    os.system(pscmd + '| grep "shell getevent" >& ' + pidfile)
     pidFileHandle = open(pidfile, 'r')
     pid = pidFileHandle.read(20).split()[0]
     pidFileHandle.close()
@@ -344,7 +368,7 @@ def playback(events='playbackfile'):
     # run subset of commands
     eventslen = len(events)
     index = 0
-    cmdshell = 'adb shell "'
+    cmdshell = ADB + 'shell "'
     cmd = cmdshell
     count = 0
     menuKey = False
@@ -366,6 +390,7 @@ def playback(events='playbackfile'):
             cmd = cmd + '"'
             if menuKey :
                 time.sleep(5)
+            print cmd
             os.system(cmd)
             cmd = cmdshell
             count = 0
@@ -375,5 +400,14 @@ def playback(events='playbackfile'):
     # run the last command
     if len(cmd) > len(cmdshell):
         cmd = cmd + '"'
+        print cmd
         os.system(cmd)
         time.sleep(3)
+
+
+def setDevice(serialnum='emulator-5554'):
+    """Switch between different devices"""
+    global ADB
+    ADB='adb -s ' + serialnum + ' '
+    global flushBuffer
+    flushBuffer=True

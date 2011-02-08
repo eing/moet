@@ -9,15 +9,9 @@
 # http://www.eclipse.org/legal/epl-v10.html
 #
 
-import logger
-import testlib
-
 """
     Useful classes and functions for the app i.e. Contact Manager
 """
-
-log = logger.getLogger('cmlib')
-
 
 class Contact:
     """ Representation of contact"""
