@@ -24,6 +24,8 @@ flushBuffer=False
 if not serialnum is None:
     ADB='adb -s ' + serialnum + ' '
     flushBuffer=True
+else:
+    serialnum=''
 session = None
 keycode = { \
     "1"         : 2, \
@@ -159,7 +161,7 @@ def enter(string=None):
     if string is None:
         executeKeyEvent(keycode['enter'])
     else:
-        startcmd = ADB + '-d shell "' 
+        startcmd = ADB + ' shell "' 
         cmd = ''
         size = len(string)
         i = 0 
@@ -180,25 +182,12 @@ def enter(string=None):
              runCount = runCount - 1
              if runCount == 0:
                  cmd = startcmd + cmd + '"'
-                 print cmd
                  os.system(cmd)
                  cmd = ''
                  runCount = 6
         if cmd <> '' :
             cmd = startcmd + cmd + '"'
-            print cmd
             os.system(cmd)
-
-        j = 10
-        allcmd=''
-        while (j > 0):
-            j=j-1
-            cmd="sendevent /dev/input/event1 3 0 0;sendevent /dev/input/event1 0 0 0;"
-            allcmd=allcmd + cmd 
-            if (j == 1):
-                allcmd = startcmd + allcmd + '"'
-                print allcmd
-                os.system(allcmd)
 
         # This used to work in 2.7
         #startSession()
@@ -318,6 +307,7 @@ def record(seconds=5, returnResult=False):
     pid = pidFileHandle.read(20).split()[0]
     pidFileHandle.close()
     print('... recording stopped')
+    print cmd
     os.system('kill -9 ' + pid)
 
     # Translate events for input
@@ -390,7 +380,6 @@ def playback(events='playbackfile'):
             cmd = cmd + '"'
             if menuKey :
                 time.sleep(5)
-            print cmd
             os.system(cmd)
             cmd = cmdshell
             count = 0
@@ -400,7 +389,6 @@ def playback(events='playbackfile'):
     # run the last command
     if len(cmd) > len(cmdshell):
         cmd = cmd + '"'
-        print cmd
         os.system(cmd)
         time.sleep(3)
 
@@ -411,3 +399,15 @@ def setDevice(serialnum='emulator-5554'):
     ADB='adb -s ' + serialnum + ' '
     global flushBuffer
     flushBuffer=True
+
+def screenshot(imagefile='test'):
+    """Takes screenshot of current connect device or emulator"""
+    global serialnum
+    if serialnum != '':
+        serialnum = '-s ' + serialnum
+    classpath='../common/ddmlib.jar:../common/screenshot.jar:ddmlib.jar:screenshot.jar'
+    classpathEnv = os.getenv('CLASSPATH')
+    if classpathEnv is not None:
+        classpath = classpathEnv + ':' + classpath
+    cmd="java -cp '" + classpath + "' com.android.screenshot.Screenshot " + serialnum + imagefile + '.png'
+    os.system(cmd)
