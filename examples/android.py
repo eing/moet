@@ -22,6 +22,9 @@ class AndroidImpl(appbase.AppInterface):
     """
 
     def getScreenShot(self, file):
+        """ Takes screenshot of current deviceli
+            @param file filename with no extension as file will be named file.png
+        """
         screenshot(file)
 
     def launch(self):
