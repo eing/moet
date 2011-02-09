@@ -307,7 +307,6 @@ def record(seconds=5, returnResult=False):
     pid = pidFileHandle.read(20).split()[0]
     pidFileHandle.close()
     print('... recording stopped')
-    print cmd
     os.system('kill -9 ' + pid)
 
     # Translate events for input
@@ -405,9 +404,8 @@ def screenshot(imagefile='test'):
     global serialnum
     if serialnum != '':
         serialnum = '-s ' + serialnum
-    classpath='../common/ddmlib.jar:../common/screenshot.jar:ddmlib.jar:screenshot.jar'
-    classpathEnv = os.getenv('CLASSPATH')
-    if classpathEnv is not None:
-        classpath = classpathEnv + ':' + classpath
+    classpath = os.getenv('CLASSPATH')
+    if classpath is None:
+        classpath='../common/ddmlib.jar:../common/screenshot.jar:ddmlib.jar:screenshot.jar'
     cmd="java -cp '" + classpath + "' com.android.screenshot.Screenshot " + serialnum + imagefile + '.png'
     os.system(cmd)
