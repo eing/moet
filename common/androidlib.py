@@ -407,5 +407,6 @@ def screenshot(imagefile='test'):
     classpath = os.getenv('CLASSPATH')
     if classpath is None:
         classpath='../common/ddmlib.jar:../common/screenshot.jar:ddmlib.jar:screenshot.jar'
+    print "Using classpath - " + classpath
     cmd="java -cp '" + classpath + "' com.android.screenshot.Screenshot " + serialnum + imagefile + '.png'
     os.system(cmd)

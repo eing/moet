@@ -20,11 +20,43 @@
 """
 
 import os
-import testlib
-import logger
 import shutil
 
-log = logger.getLogger('imagelib')
+
+try:
+    import logger
+    import testlib
+    log = logger.getLogger('imagelib')
+    testEnv = testlib.testenv
+    test_output = testEnv.testoutput
+    image_tool = testEnv.imageTool + '/'
+    runOption = testEnv.getRunOption()
+    resX = testEnv.resX
+    resY = testEnv.resY
+    imageOutputDir = testEnv.resources
+except:
+    # Create image.log with DEBUG log level
+    logfile="imagelib.log"
+    if not os.path.exists(logfile):
+        logfileIO = open(logfile, 'a')
+        logfileIO.close()
+    import logging
+    log = logging.getLogger(logfile)
+    fileHandler = logging.FileHandler(logfile)
+    formatter = logging.Formatter(\
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    fileHandler.setFormatter(formatter)
+    log.addHandler(fileHandler)
+    log.setLevel(logging.DEBUG)
+    # Set testEnv variables
+    test_output = '.'
+    runOption = 'CAPTURE'
+    resX = '320'
+    resY = '480'
+    imageOutputDir = '.'
+    # Note. This expects convert and compare tools from ImageMagick be in the SYSTEM PATH
+    image_tool = ''
+    
 
 def parseCropSettings(cropSettings, resX, resY):
     """ Convert settings in % to actual resolution crop settings, e.g.
@@ -116,28 +148,22 @@ def compare(device, image, cropSettings=None, tolerance=500):
         # Workaround for devices that have not implemented image capture
         return True
 
-    test_output = testlib.testenv.testoutput
-    image_tool = testlib.testenv.imageTool + '/'
-
-
     # crop images before compare if necessary
     actualImage = test_output + '/' + image + '.png'
-    expectedImage = testlib.testenv.resources + '/' + testlib.testenv.res + '/' \
+    expectedImage = imageOutputDir + '/' + resX + 'x' + resY + '/' \
         + image + '.png'
 
     # if run option is 'CAPTURE', copy images from output to resources dir
-    runOption = testlib.testenv.getRunOption()
-    if runOption == testlib.testenv.runOptionList[0]:
+    if runOption != "TEST":
         shutil.copy(actualImage, expectedImage)
         return True
     
     if not os.path.exists(actualImage):
-        raise testlib.MissingImageFileException("Actual image file to \
-            compare does not exist")
+        log.debug("Actual image file to compare does not exist")
+        return False
 
     if cropSettings:
-        cropSettings = parseCropSettings(cropSettings, testlib.testenv.resX, \
-            testlib.testenv.resY)
+        cropSettings = parseCropSettings(cropSettings, resX, resY)
         croppedActualImage = test_output + '/' +  image + 'ActualCropped.png'
         croppedExpectedImage = test_output + '/' + image \
             + 'ExpectedCropped.png'
@@ -175,7 +201,8 @@ def compare(device, image, cropSettings=None, tolerance=500):
         else:
             return False
     except:
-        raise testlib.ImageVerificationException("Compare results is invalid")
+        log.debug("Compare results is invalid")
+        return False
 
 
 if __name__ == "__main__":
