@@ -19,6 +19,7 @@ import time
 try:
     import testlib
     batchroot = testlib.testenv.testroot + '/common/bb/'
+    testoutput = testlib.testenv.testoutput
     device = testlib.testenv.getDevice()
     deviceOS = testlib.testenv.deviceOS
 except:
@@ -176,13 +177,13 @@ def trackball(direction='left', count=1, execute=True):
     directionX = '0' 
     directionY = '0' 
     if direction == 'up':
-        directionY = '10'
+        directionY = '5'
     elif direction == 'down':
-        directionY = '-10'
+        directionY = '-5'
     elif direction == 'left':
-        directionX= '-10'
+        directionX= '-5'
     else:
-        directionX= '10'
+        directionX= '5'
     outfilepath = testoutput + '/rolls.fct'
     outfile = open(outfilepath, 'w+')
     while count > 0:
@@ -262,7 +263,15 @@ def enterString(string, execute=True):
     outfile = open(outfilepath, 'w+')
 
     if not deviceOS.startswith('4.2') and not device.startswith('83'):
-        deviceStr = 'StringInjection(' + string + ')\nPause(1)\n' 
+        strList = string.split()
+        strLen = len(strList) - 1
+        deviceStr = 'StringInjection(' + strList[strLen] + ')\n'
+        strLen = strLen - 1
+        """ Support for spaces in strings """
+        space =  '\nKeyPress(SPACE)\nKeyRelease(SPACE)\n'
+        while strLen >=0 :
+            deviceStr = '\nStringInjection(' + strList[strLen] + ')' + space + deviceStr
+            strLen = strLen - 1
         if execute:
             fledgeRun(deviceStr, False)
             return
