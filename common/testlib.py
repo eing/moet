@@ -71,10 +71,9 @@ class testEnv:
 
         self.fullDevice = self.device + '-' + self.deviceOS
         self.testoutput = os.getenv('TEST_OUTPUT')
-        # set resolution is done by device implementation
-        self.resX = ''
-        self.resY = ''
-        self.res = ''
+        self.res = os.getenv('DEVICE_RESOLUTION')
+        self.resX = self.res.split('x')[0]
+        self.resY = self.res.split('x')[1]
 
     def getDevice(self):
         return self.device
@@ -160,3 +159,8 @@ testenv = testEnv()
 
 if __name__ == '__main__':
     print testenv.getDeviceClass()
+    print testenv.testoutput
+    print testenv.resources
+    print testenv.res
+    print testenv.resX
+    print testenv.resY
