@@ -26,7 +26,6 @@ $TEST_ROOT
 |  |__androidlib.py : common android control functions
 |  |__bblib.py      : common blackberry control functions
 |  |__imagelib.py   : image functions use for test verification
-|  |__iphonelib.py  : common iphone control functions
 |  |__logger.py     : logging utility to file $TEST_OUTPUT/run.log
 |  |__testlib.py    : exceptions, env settings, and get device
 |
@@ -42,17 +41,14 @@ $TEST_ROOT
 |  |  |__320x240  : similar to $DEVICE_RESOLUTION
 |  |  |__480x320  : contains all pics of 480x320 resolution
 |  |
-|  |__iphone
 |  |__android
 |
 |__tests : End-to-End tests
    |__testbase.py : business rules interface class for all devices to implement
    |__android.py     : android implementation for testbase  
    |__bb.py          : blackberry implementation for testbase  
-   |__iphone.py      : iphone implementation for testbase  
    |__bb.sh          : environment settings for tests to run in
-   |__BAT            : Acceptance tests that can be run for bb, iphone & android
+   |__BAT            : Acceptance tests that can be run for bb, android
    |__only_bb        : Tests only applicable on blackberry
-   |__only_iphone    : Tests only applicable on iphone
    |__only_android   : Tests only applicable on android
    |__<test function dirs> : Test functions such as search, maps, update, add etc
