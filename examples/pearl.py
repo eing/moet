@@ -12,6 +12,7 @@
 import os
 import applib
 import appbase
+import logger
 from bblib import *
 
 class PearlImpl(appbase.AppInterface):
@@ -19,7 +20,7 @@ class PearlImpl(appbase.AppInterface):
         Pearl implementation of the business rule methods
         specified in interface class CMInterface.
     """
-    log = logger.getLogger('PearlImpl', __module__)
+    log = logger.getLogger('PearlImpl')
 
     def launch(self):
         """ Launch contact manager app"""
@@ -154,5 +155,6 @@ class PearlImpl(appbase.AppInterface):
             This is required for common\imagelib.py to work.
             @param image : Name of image to save screenshot
         """
+        import testlib
         os.system('cmd /C ' + testlib.testenv.testoutput \
             + '/getScreenShot' + self.device + '.bat ' + image)

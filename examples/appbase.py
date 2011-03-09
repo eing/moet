@@ -23,7 +23,7 @@ class AppInterface:
             device = testenv.device
             self.log = logger.getLogger(testname, logfile)
         except:
-            # Create app.log with DEBUG log level
+            # Create app.log and set DEBUG log level
             logfile="app.log"
             if not os.path.exists(logfile):
                 logfileIO = open(logfile, 'a')

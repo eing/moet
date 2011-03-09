@@ -11,6 +11,7 @@
 
 """
     Useful classes and functions for the app i.e. Contact Manager
+    using OO concepts.
 """
 
 class Contact:

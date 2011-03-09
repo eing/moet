@@ -21,8 +21,8 @@ class AndroidImpl(appbase.AppInterface):
         Android implementation of methods specified in interface class.
     """
 
-    def getScreenShot(self, file):
-        """ Takes screenshot of current deviceli
+    def getScreenShot(self, file='test'):
+        """ Takes screenshot of current device
             @param file filename with no extension as file will be named file.png
         """
         screenshot(file)

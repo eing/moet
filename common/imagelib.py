@@ -33,6 +33,7 @@ try:
     runOption = testEnv.getRunOption()
     resX = testEnv.resX
     resY = testEnv.resY
+    subDir = resX + 'x' + resY
     imageOutputDir = testEnv.resources
 except:
     # Create image.log with DEBUG log level
@@ -50,9 +51,10 @@ except:
     log.setLevel(logging.DEBUG)
     # Set testEnv variables
     test_output = '.'
-    runOption = 'CAPTURE'
-    resX = '320'
-    resY = '480'
+    runOption = 'TEST'
+    resX = ''
+    resY = ''
+    subDir = ''
     imageOutputDir = '.'
     # Note. This expects convert and compare tools from ImageMagick be in the SYSTEM PATH
     image_tool = ''
@@ -150,7 +152,7 @@ def compare(device, image, cropSettings=None, tolerance=500):
 
     # crop images before compare if necessary
     actualImage = test_output + '/' + image + '.png'
-    expectedImage = imageOutputDir + '/' + resX + 'x' + resY + '/' \
+    expectedImage = imageOutputDir + '/' + subDir + '/' \
         + image + '.png'
 
     # if run option is 'CAPTURE', copy images from output to resources dir
@@ -188,8 +190,10 @@ def compare(device, image, cropSettings=None, tolerance=500):
     # diff images
     log.info('Comparing images - ' + compareCall)
     os.system('cmd /C ' + compareCall)
-    result = os.popen('grep red ' + diffResult \
-        + " | cut -d : -f 2 | cut -d ' ' -f 2").readline()
+    grep = os.popen('grep red ' + diffResult \
+        + " | cut -d : -f 2 | cut -d ' ' -f 2")
+    result = grep.readline()
+    grep.close()
 
     # return pass(True) or fail (False)
     if tolerance is None:

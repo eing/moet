@@ -20,12 +20,18 @@ import translate
 
 serialnum=os.getenv('ANDROID_SERIAL')
 ADB='adb '
-flushBuffer=False
+isSimulator=True
+
 if not serialnum is None:
     ADB='adb -s ' + serialnum + ' '
-    flushBuffer=True
+    if serialnum.find('emulator') < 0:
+        isSimulator=False
 else:
     serialnum=''
+    grep=os.popen('adb get-serialno')
+    if grep.readline().find('emulator') < 0:
+        isSimulator=False
+    grep.close()
 session = None
 keycode = { \
     "1"         : 2, \
@@ -115,24 +121,30 @@ def closeSession():
 
 def executeKeyEvent(keycode, run=True):
     """ Takes event integer keycode and excecute"""
-    cmd = 'sendevent /dev/input/event0 1 ' + str(keycode) + ' 1;' \
-        + 'sendevent /dev/input/event0 1 ' + str(keycode) + ' 0;' 
+    event = 'event4'
+    if isSimulator:
+        event = 'event0'
+    cmd = 'sendevent /dev/input/' + event + ' 1 ' + str(keycode) + ' 1;' \
+        + 'sendevent /dev/input/' + event + ' 1 ' + str(keycode) + ' 0' 
     if run:
         cmd = ADB + 'shell "' + cmd + '"' 
         os.system(cmd)
     else:
-        return cmd;
+        return cmd + ';'
 
 def backspaces(num=1):
     """ Enter backspaces into simulator """
     startcmd = ADB + 'shell "' 
+    event = 'event4'
+    if isSimulator:
+        event = 'event0'
     cmd = startcmd
     deleteKey = str(keycode['delete'])
     count = 0
     while num > 0:
         cmd = cmd + \
-            'sendevent /dev/input/event0 1 ' + deleteKey +  ' 1;' \
-            'sendevent /dev/input/event0 1 ' + deleteKey + ' 0;' 
+            'sendevent /dev/input/' + event + ' 1 ' + deleteKey +  ' 1;' \
+            'sendevent /dev/input/' + event + ' 1 ' + deleteKey + ' 0;' 
         count = count + 1
         if count > 12:
             count = 0
@@ -146,15 +158,24 @@ def backspaces(num=1):
     
 def home():
     """ Press home key in simulator """
-    executeKeyEvent(keycode['home'])
+    if isSimulator:
+        executeKeyEvent(keycode['home'])
+    else:
+        touch(700,1000)
 
 def menu():
     """ Press menu key in simulator """
-    executeKeyEvent(keycode['menu'])
+    if isSimulator:
+        executeKeyEvent(keycode['menu'])
+    else:
+        touch(400,1000)
 
 def back():
     """ Press back button in simulator """
-    executeKeyEvent(keycode['back'])
+    if isSimulator:
+        executeKeyEvent(keycode['back'])
+    else:
+        touch(100,1000)
 
 def enter(string=None):
     """ Press enter or enter string in simulator """
@@ -165,7 +186,7 @@ def enter(string=None):
         cmd = ''
         size = len(string)
         i = 0 
-        runCount = 10
+        runCount = 7
         while i < size:
              key = string[i]
              if key == ' ':
@@ -221,14 +242,27 @@ def touch(posX=0, posY=0, action='default'):
     posX = str(posX)
     posY = str(posY)
     cmd = ADB + 'shell "'
-    touch = \
-        'sendevent /dev/input/event0 3 0 ' + posX + ';' \
-        + 'sendevent /dev/input/event0 3 1 ' + posY + ';' \
-        + 'sendevent /dev/input/event0 1 330 1;'
-    release = \
-        'sendevent /dev/input/event0 0 0 0;' \
-        + 'sendevent /dev/input/event0 1 330 0;' \
-        + 'sendevent /dev/input/event0 0 0 0'
+    if isSimulator:
+        touch = \
+            'sendevent /dev/input/event0 3 0 ' + posX + ';' \
+            + 'sendevent /dev/input/event0 3 1 ' + posY + ';' \
+            + 'sendevent /dev/input/event0 1 330 1;'
+        release = \
+            'sendevent /dev/input/event0 0 0 0;' \
+            + 'sendevent /dev/input/event0 1 330 0;' \
+            + 'sendevent /dev/input/event0 0 0 0'
+    else:
+        touch = \
+            'sendevent /dev/input/event3 3 48 1;' \
+            + 'sendevent /dev/input/event3 3 53 ' + posX + ';' \
+            + 'sendevent /dev/input/event3 3 54 ' + posY + ';' \
+            + 'sendevent /dev/input/event3 0 2 0;' \
+            + 'sendevent /dev/input/event3 0 0 0;'
+        release = \
+            'sendevent /dev/input/event3 3 48 0;' \
+            + 'sendevent /dev/input/event3 0 2 0;' \
+            + 'sendevent /dev/input/event3 0 0 0'
+
     if action == 'down':
         cmd = cmd + touch
     elif action == 'up':
@@ -243,14 +277,27 @@ def drag(fromX=0, fromY=0, toX=0, toY=0):
     """ 
         Move on touch screen from (fromX,fromY) to (toX, toY)
     """
-    release = ADB + 'shell sendevent /dev/input/event0 0 0 0'
-    os.system(release)
+    if isSimulator:
+        release = 'sendevent /dev/input/event0 0 0 0'
+    else:
+        release = 'sendevent /dev/input/event3 0 2 0;' \
+            + 'sendevent /dev/input/event3 0 0 0' 
+    os.system(ADB + 'shell "' + release + '"')
 
-    cmd = ADB + 'shell "' \
-        + 'sendevent /dev/input/event0 3 0 ' + str(fromX) + ';' \
-        + 'sendevent /dev/input/event0 3 1 ' + str(fromY) + ';' \
-        + 'sendevent /dev/input/event0 1 330 1;' \
-        + 'sendevent /dev/input/event0 0 0 0;'
+    if isSimulator:
+        cmd = ADB + 'shell "' \
+            + 'sendevent /dev/input/event0 3 0 ' + str(fromX) + ';' \
+            + 'sendevent /dev/input/event0 3 1 ' + str(fromY) + ';' \
+            + 'sendevent /dev/input/event0 1 330 1;' \
+            + 'sendevent /dev/input/event0 0 0 0;'
+    else:
+        cmd = ADB + 'shell "' \
+            + 'sendevent /dev/input/event3 3 48 1;' \
+            + 'sendevent /dev/input/event3 3 50 2;' \
+            + 'sendevent /dev/input/event3 3 53 ' + str(fromX) + ';' \
+            + 'sendevent /dev/input/event3 3 54 ' + str(fromY) + ';' \
+            + 'sendevent /dev/input/event3 0 2 0;' \
+            + 'sendevent /dev/input/event3 0 0 0;'
     diffX = toX - fromX
     diffY = toY - fromY
      
@@ -267,21 +314,41 @@ def drag(fromX=0, fromY=0, toX=0, toY=0):
         if totalX > 0:
             totalX = totalX - 1
             fromX = fromX + stepX
-            cmd = cmd + 'sendevent /dev/input/event0 3 0 ' + str(fromX) + ';'
+            if isSimulator:
+                cmd = cmd + 'sendevent /dev/input/event0 3 0 ' + str(fromX) + ';'
+            else:
+                cmd = cmd \
+                    + 'sendevent /dev/input/event3 3 48 1;' \
+                    + 'sendevent /dev/input/event3 3 50 2;' \
+                    + 'sendevent /dev/input/event3 3 53 ' + str(fromX) + ';'
 
         if totalY > 0:
             totalY = totalY - 1
             fromY = fromY + stepY
-            cmd = cmd + 'sendevent /dev/input/event0 3 1 ' + str(fromY) + ';'
-        cmd = cmd + 'sendevent /dev/input/event0 0 0 0;'
+            if isSimulator:
+                cmd = cmd + 'sendevent /dev/input/event0 3 1 ' + str(fromY) + ';'
+            else:
+                cmd = cmd + 'sendevent /dev/input/event3 3 54 ' + str(fromY) + ';'
+        if isSimulator:
+            cmd = cmd + 'sendevent /dev/input/event0 0 0 0;'
+        else:
+            cmd = cmd + 'sendevent /dev/input/event3 0 2 0;sendevent /dev/input/event3 0 0 0;'
 
-    cmd = cmd \
-        + 'sendevent /dev/input/event0 3 0 ' + str(toX) + ';' \
-        + 'sendevent /dev/input/event0 3 1 ' + str(toY) + ';' \
-        + 'sendevent /dev/input/event0 0 0 0;' \
-        + 'sendevent /dev/input/event0 1 330 0;' \
-        + 'sendevent /dev/input/event0 0 0 0"'
-    os.system(cmd)
+    if isSimulator:
+        cmd = cmd \
+            + 'sendevent /dev/input/event0 3 0 ' + str(toX) + ';' \
+            + 'sendevent /dev/input/event0 3 1 ' + str(toY) + ';' \
+            + 'sendevent /dev/input/event0 0 0 0;' \
+            + 'sendevent /dev/input/event0 1 330 0;'
+    else:
+        cmd = cmd \
+            + 'sendevent /dev/input/event3 3 48 1;' \
+            + 'sendevent /dev/input/event3 3 50 2;' \
+            + 'sendevent /dev/input/event3 3 53 ' + str(toX) + ';' \
+            + 'sendevent /dev/input/event3 3 54 ' + str(toY) + ';' \
+            + 'sendevent /dev/input/event3 0 2 0;' \
+            + 'sendevent /dev/input/event3 0 0 0;' + release
+    os.system(cmd + '"')
 
 def record(seconds=5, returnResult=False):
     """ 
@@ -392,21 +459,34 @@ def playback(events='playbackfile'):
         time.sleep(3)
 
 
-def setDevice(serialnum='emulator-5554'):
+def setDevice(serial='emulator-5554'):
     """Switch between different devices"""
     global ADB
+    global serialnum
+    serialnum = serial 
     ADB='adb -s ' + serialnum + ' '
-    global flushBuffer
-    flushBuffer=True
+    global isSimulator
+    if serialnum.find('emulator') < 0:
+        isSimulator=False
+    else:
+        isSimulator=True
 
 def screenshot(imagefile='test'):
     """Takes screenshot of current connect device or emulator"""
     global serialnum
-    if serialnum != '':
-        serialnum = '-s ' + serialnum
+    serial = ''
+    if len(serialnum) <> 0:
+        serial = '-s ' + serialnum + ' '
     classpath = os.getenv('CLASSPATH')
     if classpath is None:
         classpath='../common/ddmlib.jar:../common/screenshot.jar:ddmlib.jar:screenshot.jar'
-    print "Using classpath - " + classpath
-    cmd="java -cp '" + classpath + "' com.android.screenshot.Screenshot " + serialnum + imagefile + '.png'
+    cmd="java -cp '" + classpath + "' com.android.screenshot.Screenshot " + serial + imagefile + '.png'
     os.system(cmd)
+
+def launch(appActivity):
+    """Launch your application"""
+    if appActivity is None:
+        print "Usage: Provide activityname e.g. com.package.name/com.package.name.ActivityName"
+    else:
+        cmd = ADB + 'shell am start -n ' + appActivity
+        os.system(cmd)

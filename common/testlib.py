@@ -1,10 +1,10 @@
 #
 # Copyright 2010 Intuit, Inc.
 #
-# Licensed under the Eclipse Public License, Version 1.0 (the "License"); you may
-# not use this file except in compliance with the License. Please see the License 
-# for the specific language governing permissions and limitations.
-# You may obtain a copy of the License at
+# Licensed under the Eclipse Public License, Version 1.0 (the "License"); 
+# you may not use this file except in compliance with the License. Please 
+# see the License for the specific language governing permissions and 
+# limitations. You may obtain a copy of the License at
 #
 # http://www.eclipse.org/legal/epl-v10.html
 #

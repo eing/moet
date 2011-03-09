@@ -56,7 +56,7 @@ class AddContactDemoTest(unittest.TestCase):
 
     def validate(self, testname=None):
         """Verify that add contact succeed by viewing contact details"""
-        self.assertTrue(imagelib.compare(self.device, self.firstname))
+        self.assertTrue(imagelib.compare(self.device, self.firstname, "+0+10%", 1000))
 
 
 
