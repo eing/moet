@@ -9,6 +9,13 @@
 # http://www.eclipse.org/legal/epl-v10.html
 #
 
+import os
+path = os.getenv('PATH')
+imageCmd = ''
+""" Support for windows os """
+if path.find('Program Files') >= 0:
+    imageCmd = 'cmd \C '
+
 """ Compare tool takes a snapshot of the current image and compare 
     with the expected image. 
     (Optional) Cropped settings determines area to compare 
@@ -22,19 +29,29 @@
 import os
 import shutil
 
+# Set testEnv variables
+test_output = '.'
+runOption = 'TEST'
+resX = ''
+resY = ''
+subDir = ''
+resourcesDir = '.'
+log = ''
+# Note. This expects convert and compare tools from ImageMagick be in the SYSTEM PATH
+image_tool = ''
 
 try:
-    import logger
     import testlib
-    log = logger.getLogger('imagelib')
     testEnv = testlib.testenv
     test_output = testEnv.testoutput
-    image_tool = testEnv.imageTool + '/'
-    runOption = testEnv.getRunOption()
+    resourcesDir = testEnv.resources
+    subDir = testEnv.res
     resX = testEnv.resX
     resY = testEnv.resY
-    subDir = resX + 'x' + resY
-    imageOutputDir = testEnv.resources
+    import logger
+    log = logger.getLogger('imagelib')
+    runOption = testEnv.getRunOption()
+    image_tool = testEnv.imageTool + '/'
 except:
     # Create image.log with DEBUG log level
     logfile="imagelib.log"
@@ -49,16 +66,6 @@ except:
     fileHandler.setFormatter(formatter)
     log.addHandler(fileHandler)
     log.setLevel(logging.DEBUG)
-    # Set testEnv variables
-    test_output = '.'
-    runOption = 'TEST'
-    resX = ''
-    resY = ''
-    subDir = ''
-    imageOutputDir = '.'
-    # Note. This expects convert and compare tools from ImageMagick be in the SYSTEM PATH
-    image_tool = ''
-    
 
 def parseCropSettings(cropSettings, resX, resY):
     """ Convert settings in % to actual resolution crop settings, e.g.
@@ -146,14 +153,19 @@ def compare(device, image, cropSettings=None, tolerance=500):
 
     if 'getScreenShot' in dir(device) :
         device.getScreenShot(image)
+    elif 'screenshot' in dir(device) :
+        device.screenshot(image)
     else:
         # Workaround for devices that have not implemented image capture
+        print 'Pls implement getScreenShot(imagename) for your device'
         return True
 
     # crop images before compare if necessary
     actualImage = test_output + '/' + image + '.png'
-    expectedImage = imageOutputDir + '/' + subDir + '/' \
+    expectedImage = resourcesDir + '/' + subDir + '/' \
         + image + '.png'
+    #print 'actualImage is ' + actualImage
+    #print 'expectImage is ' + expectedImage
 
     # if run option is 'CAPTURE', copy images from output to resources dir
     if runOption != "TEST":
@@ -162,11 +174,14 @@ def compare(device, image, cropSettings=None, tolerance=500):
     
     if not os.path.exists(actualImage):
         log.debug("Actual image file to compare does not exist")
+        log.debug("actualImage location is " + actualImage)
         return False
 
     if cropSettings:
         cropSettings = parseCropSettings(cropSettings, resX, resY)
         croppedActualImage = test_output + '/' +  image + 'ActualCropped.png'
+        #croppedExpectedImage = resourcesDir + '/' + subDir + '/' + image \
+        #    + 'ExpectedCropped.png'
         croppedExpectedImage = test_output + '/' + image \
             + 'ExpectedCropped.png'
         convertActual = image_tool + 'convert -crop ' + cropSettings \
@@ -175,8 +190,8 @@ def compare(device, image, cropSettings=None, tolerance=500):
             + cropSettings + ' ' + expectedImage + ' ' \
             + croppedExpectedImage
 
-        os.system('cmd /C ' + convertActual)
-        os.system('cmd /C ' + convertExpected)
+        os.system(imageCmd + convertActual)
+        os.system(imageCmd + convertExpected)
         actualImage = croppedActualImage
         expectedImage = croppedExpectedImage
 
@@ -189,7 +204,7 @@ def compare(device, image, cropSettings=None, tolerance=500):
 
     # diff images
     log.info('Comparing images - ' + compareCall)
-    os.system('cmd /C ' + compareCall)
+    os.system(imageCmd + compareCall)
     grep = os.popen('grep red ' + diffResult \
         + " | cut -d : -f 2 | cut -d ' ' -f 2")
     result = grep.readline()
@@ -212,6 +227,7 @@ def compare(device, image, cropSettings=None, tolerance=500):
 if __name__ == "__main__":
     import bb
     b = bb.BlackBerry()
+    print 'resourcesDir is ' + resourcesDir
     x = compare(b, 'testCreateCustomerWithNoAddresses', '100%x90%', None)
     print  x
 
