@@ -8,15 +8,16 @@
 #
 # http://www.eclipse.org/legal/epl-v10.html
 #
+# Version 1.0
 
 def translate(inputString):
-"""
-   Utility for androidlib.py. 
-   Translates an list of adb getevents to adb sendevent for playback
-   E.g.
-      Input  : /dev/input/event0: 0001 00e5 00000001
-      Output : sendevent /dev/input/event0 1 229 1
-"""
+    """
+       Utility for androidlib.py. 
+       Translates an list of adb getevents to adb sendevent for playback
+       E.g.
+          Input  : /dev/input/event0: 0001 00e5 00000001
+          Output : sendevent /dev/input/event0 1 229 1
+    """
     colonSplit = inputString.split(':')
     if len(colonSplit) < 2:
         return ''
