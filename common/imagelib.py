@@ -151,7 +151,9 @@ def parseCropSettings(cropSettings, resX, resY):
 def compare(device, image, cropSettings=None, tolerance=500):
     """ Compare images using cropped settings and tolerance level """
 
-    if 'getScreenShot' in dir(device) :
+    if device is None:
+        log.info('Using existing image to compare')
+    elif 'getScreenShot' in dir(device) :
         device.getScreenShot(image)
     elif 'screenshot' in dir(device) :
         device.screenshot(image)
@@ -168,7 +170,11 @@ def compare(device, image, cropSettings=None, tolerance=500):
     #print 'expectImage is ' + expectedImage
 
     # if run option is 'CAPTURE', copy images from output to resources dir
-    if runOption != "TEST":
+    if runOption != "TEST" and not device is None:
+        expectedImageDir = resourcesDir + '/' + subDir + '/'
+        if not os.path.exists(expectedImageDir): 
+            log.info('Creating image archive directory at ' + expectedImageDir)
+            os.makedirs(expectedImageDir)
         shutil.copy(actualImage, expectedImage)
         return True
     

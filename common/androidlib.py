@@ -21,6 +21,9 @@ import translate
 serialnum=os.getenv('ANDROID_SERIAL')
 ADB='adb '
 isSimulator=True
+orientation=os.getenv('ORIENTATION')
+if orientation is None:
+    orientation='portrait'
 
 if not serialnum is None:
     ADB='adb -s ' + serialnum + ' '
@@ -220,6 +223,10 @@ def scroll(action='left', num=1):
     runCount = 6
     startcmd = ADB + 'shell "' 
     cmd = ''
+    # in landscape mode, keys are swapped
+    if orientation.find('landscape') >= 0 :
+        newaction = { 'up' : 'right', 'down' : 'left', 'left' : 'up', 'right' : 'down' }
+        action = newaction[action]
     while num > 0:
         if action in ['up', 'down', 'left', 'right']:
             cmd = cmd + executeKeyEvent(keycode[action], False)
@@ -241,6 +248,25 @@ def touch(posX=0, posY=0, action='default'):
     """
     posX = str(posX)
     posY = str(posY)
+    # set default resolution
+    resX = 480
+    resY = 800
+
+    if posX.endswith('%') or posY.endswith('%'):
+        try:
+            # attempt to get resolution
+            import testlib
+            resX = testlib.testenv.resX
+            resY = testlib.testenv.resY
+        except:
+            print "assuming resolution 480x800"
+        if posX.endswith('%'):
+            posX = posX.rstrip('%')
+            posX = str( int(posX) * int(resX) / 100)
+        if posY.endswith('%'):
+            posY = posY.rstrip('%')
+            posY = str( int(posY) * int(resY) / 100)
+
     cmd = ADB + 'shell "'
     if isSimulator:
         touch = \
@@ -458,6 +484,10 @@ def playback(events='playbackfile'):
         os.system(cmd)
         time.sleep(3)
 
+def setOrientation(deviceOrientation='portrait'):
+    """ Set orientation """
+    global orientation
+    orientation = deviceOrientation
 
 def setDevice(serial='emulator-5554'):
     """Switch between different devices"""
@@ -479,9 +509,25 @@ def screenshot(imagefile='test'):
         serial = '-s ' + serialnum + ' '
     classpath = os.getenv('CLASSPATH')
     if classpath is None:
-        classpath='../common/ddmlib.jar:../common/screenshot.jar:ddmlib.jar:screenshot.jar'
+        classpath = ''
+    path = os.getenv('PATH')
+    if path.find('Program Files') >= 0:
+        # Windows
+        classpath='ddmlib.jar;screenshot.jar;..\common\ddmlib.jar;..\common\screenshot.jar;' + classpath
+    else:
+        # Mac
+        classpath='ddmlib.jar:screenshot.jar:../common/ddmlib.jar:../common/screenshot.jar:' + classpath
+
     cmd="java -cp '" + classpath + "' com.android.screenshot.Screenshot " + serial + imagefile + '.png'
+
     os.system(cmd)
+    try:
+        import testlib
+        testoutput = testlib.testenv.testoutput
+        os.system('mv ' + imagefile + '.png ' + testoutput)
+        #print imagefile + '.png is saved to ' + testoutput
+    except:
+        print imagefile + '.png is saved to current directory'
 
 def launch(appActivity):
     """Launch your application"""
