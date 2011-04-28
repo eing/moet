@@ -40,16 +40,20 @@ touch(x,y), drag(fromX, fromY, toX, toY), screenshot(filename)
 
 # interactive mode
 >> moet -d -iphone -i
+>>> from iphonelib import *
 >> moet -d -android -i
-
-# capture mode - captures screenshots for your first test run
-# results are saved in $MOET/results/$MOET_DEVICE-$MOET_OS-$MOET_RESULTSDATE
->> moet -d -iphone testdemo.py
->> moet -d -android testdemo.py
+>>> from androidlib import *
 
 # test mode
+>> cd $MOET/examples
 >> moet -d -android testdemo.py
 >> moet -d -android -os 2.2.1 -res 320x480 testdemo.py
 >> moet -d -android -os 2.2.1 -res 320x480 -s HTC12345 testdemo.py
 >> moet -d -iphone testdemo.py
 >> moet -d -iphone -os 4.2 testdemo.py
+
+# capture mode - captures screenshots for your first test run
+# results are saved in $MOET/results/$MOET_DEVICE-$MOET_OS-$MOET_RESULTSDATE
+>> moet -d -iphone  -c testdemo.py
+>> moet -d -android -c testdemo.py
+
