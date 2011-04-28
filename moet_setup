@@ -1,0 +1,139 @@
+#################################################
+# Examples of usage where [ ... ] is optional
+#
+# If no OS is specified, logs will be in iphone-4.3-ddmm-<n>
+# moet -d iphone  [-os 4.3] tests.py
+#
+# If no OS is specified, logs will be in android-2.2-ddmm-hr
+# moet -d android [-os 2.2  -res 480x800] tests.py
+#
+# For multiple simulators, use -id <serial number>
+# moet -d android [-os 2.2  -res 480x800 -id htc102938] test.py
+#
+# For multiple simulators, use -id <pin:port>
+# moet -d bb9550  -os 5.0.0 [-id 553648139:25601] test.py
+#
+# For HELP, add -h
+# For interactive mode, add -i
+# For image capture mode, add -c
+#
+#################################################
+
+function usage {
+    echo 'usage : '
+    echo 'moet -d iphone   [-os os]  [-ic] [file]'
+    echo 'moet -d android  [-os os]  [-ic] [-res resolution] [-ic] [-s serial]   [file]'
+    echo 'moet -d bb<model> -os <os> [-ic] [-res resolution] [-ic] [-s pin:port] [file]'
+    echo 'For interactive mode,   use -i'
+    echo 'For image capture mode, use -c'
+    echo
+}
+
+function iphone_usage {
+    echo 'available iphone commands:'
+    echo 'backspaces(num), enter(string), scroll(up/down/left/right, num)'
+    echo 'done(), home(), next(), previous()'
+    echo 'touch(x,y), drag(fromX, fromY, toX, toY), screenshot(filename)'
+}
+
+function android_usage {
+    echo 'available android commands:'
+    echo 'backspaces(num), enter(string), scroll(up/down/left/right, num)'
+    echo 'back(), home(), menu(), record(), playback()'
+    echo 'connect(serial), getDevice(), launch(appActivity)'
+    echo 'touch(x,y), drag(fromX, fromY, toX, toY), screenshot(filename)'
+}
+
+# if no arguments are given
+if [ $# -eq 0 ]; then
+    usage
+    exit 2
+fi
+
+MOET_MODE=TEST
+MOET_DEVICE=NONE
+MOET_RESOLUTION=480x800
+MOET_OS=NONE
+MOET_HELP=FALSE
+unset MOET_DEVICEID
+
+set -- `getopt icdorhs,os,res: "$@"`
+if [ $# -lt 1 ]; then
+    exit 1
+fi
+
+while [ $# -gt 0 ]; do
+    case $1 in
+        -i) MOET_MODE=DEMO;;
+        -c) MOET_MODE=CAPTURE;;
+        -d) MOET_DEVICE=$3; shift; shift;;
+        -o) MOET_OS=$2; shift;;
+       -os) MOET_OS=$2; shift;;
+        -r) MOET_RESOLUTION=$2; shift;;
+      -res) MOET_RESOLUTION=$2; shift;;
+        -s) export MOET_DEVICEID=$2; shift;;
+        \?) usage;;
+        -h) MOET_HELP=TRUE;; 
+        -*) echo "$0: Error - unrecognized option $1";;
+         *) TEST=$1; break ;;
+    esac
+    shift
+done
+
+export MOET_MODE
+export MOET_DEVICE
+export MOET_RESOLUTION
+export MOET_OS
+export MOET_RESULTSDATE=`date +%m%d-%H`
+
+if [ $MOET_HELP = 'TRUE' ]; then
+    if [ $MOET_DEVICE = 'iphone' ]; then
+        iphone_usage
+    elif [ $MOET_DEVICE = 'android' ]; then
+        android_usage
+    else
+        usage
+    fi
+    exit 0
+fi
+
+
+if [ $MOET_DEVICE = 'android' ]; then
+    if [ $MOET_OS = 'NONE' ]; then
+        export MOET_OS=2.2
+    fi
+    export MOET_FULLDEVICE=$MOET_DEVICE-$MOET_OS
+    export MOET_RESULTS=$MOET/results/$MOET_FULLDEVICE-$MOET_RESULTSDATE
+    ANDROIDLIB=`which adb`
+    if [ $? -gt 0 ]; then
+            echo 'pls add <yourAndroidSDK>/platform-tools to your PATH.'
+            echo "e.g. export PATH='/Users/<you>/android-sdk-mac_x86/platform-tools:\$PATH'"
+        exit -1
+    fi
+    ANDROIDLIB=$ANDROIDLIB
+    ANDROIDLIB=`echo $ANDROIDLIB | sed -e 's/adb//;s/platform-tools\///'`tools/lib
+    BINDDIR=`echo $ANDROIDLIB | sed -e 's/\/lib//'`
+    if [ $MOET_MODE = 'DEMO' ]; then
+        java -Xmx128M -Djava.ext.dirs=$ANDROIDLIB -Djava.library.path=$ANDROIDLIB -Dcom.android.monkeyrunner.bindir=$BINDDIR -jar $ANDROIDLIB/monkeyrunner.jar
+        exit 0
+    fi
+    java -Xmx128M -Djava.ext.dirs=$ANDROIDLIB -Djava.library.path=$ANDROIDLIB -Dcom.android.monkeyrunner.bindir=$BINDDIR -jar $ANDROIDLIB/monkeyrunner.jar $TEST
+    exit 0
+fi
+
+
+if [ $MOET_DEVICE = 'iphone' ]; then
+    export MOET_RESOLUTION=320x480
+    if [ $MOET_OS = 'NONE' ]; then
+        export MOET_OS=4.3
+    fi
+    export MOET_FULLDEVICE=$MOET_DEVICE-$MOET_OS
+    export MOET_RESULTS=$MOET/results/$MOET_FULLDEVICE-$MOET_RESULTSDATE
+    if [ $MOET_MODE = 'DEMO' ]; then
+        java -jar $MOET/common/iphone/sikuli-script.jar -i
+        #java -cp $MOET/common/iphone/sikuli-script.jar org.python.util.jython -i
+        exit 0
+    fi
+    java -cp $MOET/common/iphone/sikuli-script.jar org.python.util.jython $TEST
+    exit 0
+fi

@@ -9,15 +9,21 @@
 # http://www.eclipse.org/legal/epl-v10.html
 #
 
+__version__ = '1.0'
+__license__ = "EPL 1"
+__author__ = [ 'Eing Ong @eingong' ]
+
 import testlib
 import logger
 
 class AppInterface:
     """ Application interface for all devices to implement """
-    testenv = testlib.testenv
+
+    """ Common variables """
+    testenv = testlib.settings
     testroot = testenv.testroot
     testoutput = testenv.testoutput
-    device = testenv.device
+    device = testenv.mobileDevice
 
     def initLogger(self, testname='AddressBook', logfile=None):
         """ Initialize logger for all tests """

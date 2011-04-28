@@ -39,9 +39,9 @@ $TEST_ROOT
 |__resources      : resources include snapshots, device specific scripts
 |  |__bb
 |  |  |__320x240  : similar to $DEVICE_RESOLUTION
-|  |  |__480x320  : contains all pics of 480x320 resolution
 |  |
 |  |__android
+|     |__480x800  : similar to $DEVICE_RESOLUTION
 |
 |__tests : End-to-End tests
    |__testbase.py : business rules interface class for all devices to implement

@@ -27,7 +27,6 @@ class AddContactTest(unittest.TestCase):
     email = 'test6509876543@t.co.uk'
     contact = applib.Contact()
 
-
     def setUp(self):
         self.log = self.device.initLogger(self._testMethodName, \
             self.__class__.__name__)
@@ -39,7 +38,7 @@ class AddContactTest(unittest.TestCase):
 
     def validate(self, testname=None):
         """Verify that add contact succeed by viewing contact details"""
-        self.assertTrue(imagelib.compare(self.device, self.firstname, '+0+10%', 1000))
+        self.assertTrue(imagelib.compare(self.firstname, self.device, '+0+10%', 1000))
 
     def tearDown(self):
         # Search and delete contact  

@@ -9,6 +9,10 @@
 # http://www.eclipse.org/legal/epl-v10.html
 #
 
+__version__ = '1.0'
+__license__ = "EPL 1"
+__author__ = [ 'Eing Ong @eingong' ]
+
 import os
 import time
 import applib
@@ -27,7 +31,7 @@ class AndroidImpl(appbase.AppInterface):
         screenshot(file)
 
     def launch(self):
-        """ Launch app """
+        """ Launch app with activity and component name """
         launch('com.android.contacts/.DialtactsContactsEntryActivity -a android.intent.action.MAIN')
 
     def screen(self, name="phone"):
@@ -108,6 +112,7 @@ class AndroidImpl(appbase.AppInterface):
         time.sleep(2)
 
         # select contact
+        scroll('down')
         scroll('down')
 
         # open contact

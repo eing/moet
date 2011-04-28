@@ -8,383 +8,181 @@
 #
 # http://www.eclipse.org/legal/epl-v10.html
 #
+# Version 1.0
 
 """ 
-    Library containing all Android device common functions. 
+    An extension to MonkeyRunner tool in Android SDK.
+    For MonkeyRunner documentation, pls refer to
+    http://developer.android.com/guide/developing/tools/monkeyrunner_concepts.html
 """
 
+__version__ = '1.0'
+__license__ = "EPL 1"
+__author__ = [ 'Eing Ong @eingong' ]
+
+from com.android.monkeyrunner import MonkeyRunner, MonkeyDevice
 import os
 import time
-import telnetlib
-import translate
 
-serialnum=os.getenv('ANDROID_SERIAL')
-ADB='adb '
-isSimulator=True
-orientation=os.getenv('ORIENTATION')
-if orientation is None:
-    orientation='portrait'
+device = ''
+id = None
 
-if not serialnum is None:
-    ADB='adb -s ' + serialnum + ' '
-    if serialnum.find('emulator') < 0:
-        isSimulator=False
-else:
-    serialnum=''
-    grep=os.popen('adb get-serialno')
-    if grep.readline().find('emulator') < 0:
-        isSimulator=False
-    grep.close()
-session = None
-keycode = { \
-    "1"         : 2, \
-    "2"         : 3, \
-    "3"         : 4, \
-    "4"         : 5, \
-    "5"         : 6, \
-    "6"         : 7, \
-    "7"         : 8, \
-    "8"         : 9, \
-    "9"         : 10, \
-    "0"         : 11, \
-    "q"         : 16, \
-    "w"         : 17, \
-    "e"         : 18, \
-    "r"         : 19, \
-    "t"         : 20, \
-    "y"         : 21, \
-    "u"         : 22, \
-    "i"         : 23, \
-    "o"         : 24, \
-    "p"         : 25, \
-    "a"         : 30, \
-    "s"         : 31, \
-    "d"         : 32, \
-    "f"         : 33, \
-    "g"         : 34, \
-    "h"         : 35, \
-    "j"         : 36, \
-    "k"         : 37, \
-    "l"         : 38, \
-    "z"         : 44, \
-    "x"         : 45, \
-    "c"         : 46, \
-    "v"         : 47, \
-    "b"         : 48, \
-    "n"         : 49, \
-    "m"         : 50, \
-    "."         : 52, \
-    "@"         : 215, \
-    "/"         : 53, \
-    ","         : 51, \
-    "alt"       : 56, \
-    "sym"       : 127, \
-    "shift"     : 42, \
-    "delete"    : 14, \
-    "enter"     : 28, \
-    "space"     : 57, \
-    "home"      : 102, \
-    "up"        : 103, \
-    "left"      : 105, \
-    "right"     : 106, \
-    "down"      : 108, \
-    "endcall"   : 107, \
-    "power"     : 116, \
-    "back"      : 158, \
-    "menu"      : 229, \
-    "call"      : 231
-}
+# Add libraries in to path
+try:
+    import sys
+    sys.path.append('.')
+    id = os.getenv('MOET_DEVICEID')
+    testroot = os.getenv('MOET')
+    testpath = os.path.join(testroot, 'tests')
+    sys.path.append(testpath)
+    examplespath = os.path.join(testroot, 'examples')
+    sys.path.append(examplespath)
+    common = os.path.join(testroot, 'common')
+    sys.path.append(common)
+except:
+    print 'Pls add MOET to your environment setting'
+    print 'E.g. Mac Terminal : export MOET=/Users/<youruserid>/moet'
+    print 'E.g. Windows DOS  : set MOET=C:\moet'
 
-altkeys = { \
-    '!':1 , '#':3 , '$':4 , '%':5 , '^':6 , '&':7 , \
-    '*':8 , '(':9 , ')':0 , '|':'q' , '~':'w' , \
-    '"':'e' , '`':'r' , '{':'t' , '}':'y' , '-':'u' , \
-    '+':'o' , '=':'p' , '\\':'s' , '\'':'d' , '[':'f' , \
-    ']':'g' , '<':'h' , '>':'j' , ';':'k' , ':':'l' , \
-    '?':'/' 
-}
-
-
-def startSession(host='localhost', port = '5554'):
-    """
-        Start telnet session into Android simulator.
-        @param host : hostname, default localhost
-        @param port : telnet port, default 5554
-    """ 
-    global session
-    if session is None:
-        session = telnetlib.Telnet(host, port)
-
-def closeSession():
-    """ Close telnet session """
-    global session
-    if not session is None:
-        session.close()
-        session = None
-
-def executeKeyEvent(keycode, run=True):
-    """ Takes event integer keycode and excecute"""
-    event = 'event4'
-    if isSimulator:
-        event = 'event0'
-    cmd = 'sendevent /dev/input/' + event + ' 1 ' + str(keycode) + ' 1;' \
-        + 'sendevent /dev/input/' + event + ' 1 ' + str(keycode) + ' 0' 
-    if run:
-        cmd = ADB + 'shell "' + cmd + '"' 
-        os.system(cmd)
-    else:
-        return cmd + ';'
+# from androidlib import * will import these methods
+__all__ = ["backspaces", "home", "menu", "back", "enter", "scroll", \
+    "touch", "drag", "record", "playback", "connect", "connectFirstDevice", \
+    "screenshot", "launch", "getDevice"]
 
 def backspaces(num=1):
-    """ Enter backspaces into simulator """
-    startcmd = ADB + 'shell "' 
-    event = 'event4'
-    if isSimulator:
-        event = 'event0'
-    cmd = startcmd
-    deleteKey = str(keycode['delete'])
-    count = 0
+    """ Enter backspaces """
+    global device
+    if device == '' :
+        connectFirstDevice()
     while num > 0:
-        cmd = cmd + \
-            'sendevent /dev/input/' + event + ' 1 ' + deleteKey +  ' 1;' \
-            'sendevent /dev/input/' + event + ' 1 ' + deleteKey + ' 0;' 
-        count = count + 1
-        if count > 12:
-            count = 0
-            cmd = cmd + '"'
-            os.system(cmd)
-            cmd = startcmd
+        device.press('KEYCODE_DEL', 'DOWN_AND_UP')
         num = num - 1
-    if count > 0:
-        cmd = cmd + '"'
-        os.system(cmd)
     
 def home():
-    """ Press home key in simulator """
-    if isSimulator:
-        executeKeyEvent(keycode['home'])
-    else:
-        touch(700,1000)
+    """ Press home key  """
+    global device
+    if device == '' :
+        connectFirstDevice()
+    device.press('KEYCODE_HOME', 'DOWN_AND_UP')
 
 def menu():
-    """ Press menu key in simulator """
-    if isSimulator:
-        executeKeyEvent(keycode['menu'])
-    else:
-        touch(400,1000)
+    """ Press menu key  """
+    global device
+    if device == '' :
+        connectFirstDevice()
+    device.press('KEYCODE_MENU', 'DOWN_AND_UP')
 
 def back():
-    """ Press back button in simulator """
-    if isSimulator:
-        executeKeyEvent(keycode['back'])
-    else:
-        touch(100,1000)
+    """ Press back button  """
+    global device
+    if device == '' :
+        connectFirstDevice()
+    device.press('KEYCODE_BACK', 'DOWN_AND_UP')
 
 def enter(string=None):
-    """ Press enter or enter string in simulator """
+    """ Press enter or enter string  """
+    global device
+    if device == '' :
+        connectFirstDevice()
     if string is None:
-        executeKeyEvent(keycode['enter'])
+        device.press('KEYCODE_ENTER', 'DOWN_AND_UP')
     else:
-        startcmd = ADB + ' shell "' 
-        cmd = ''
-        size = len(string)
-        i = 0 
-        runCount = 7
-        while i < size:
-             key = string[i]
-             if key == ' ':
-                 key = 'space'
-             elif key.isupper():
-                 # press the shift key
-                 cmd = cmd + executeKeyEvent(keycode['shift'], False)
-                 key = key.lower()
-             elif key in altkeys:
-                 cmd = cmd + executeKeyEvent(keycode['alt'], False)
-                 key = str(altkeys[key])
-             cmd = cmd + executeKeyEvent(keycode[key], False)
-             i = i + 1
-             runCount = runCount - 1
-             if runCount == 0:
-                 cmd = startcmd + cmd + '"'
-                 os.system(cmd)
-                 cmd = ''
-                 runCount = 6
-        if cmd <> '' :
-            cmd = startcmd + cmd + '"'
-            os.system(cmd)
-
-        # This used to work in 2.7
-        #startSession()
-        #cmd = "event text " + string + "\n"
-        #session.write(cmd)
+        strList = string.split()
+        strLen = len(strList) - 1
+        device.type(strList[0])
+        if strLen >= 1:
+            index = 1
+            while index <= strLen:
+                device.press('KEYCODE_SPACE', 'DOWN_AND_UP')
+                device.type(strList[index])
+                index = index + 1
 
 def scroll(action='left', num=1):
-    """ Press cursor keys (up, down, left, right) in simulator """
-    runCount = 6
-    startcmd = ADB + 'shell "' 
-    cmd = ''
-    # in landscape mode, keys are swapped
-    if orientation.find('landscape') >= 0 :
-        newaction = { 'up' : 'right', 'down' : 'left', 'left' : 'up', 'right' : 'down' }
-        action = newaction[action]
-    while num > 0:
-        if action in ['up', 'down', 'left', 'right']:
-            cmd = cmd + executeKeyEvent(keycode[action], False)
-        num = num - 1
-        runCount = runCount - 1
-        if runCount == 0:
-            cmd = startcmd + cmd + '"'
-            os.system(cmd)
-            cmd = ''
-            runCount = 6
-    if cmd <> '' :
-        cmd = startcmd + cmd + '"'
-        os.system(cmd)
+    """ Press cursor keys (up, down, left, right)  """
+    global device
+    if device == '' :
+        connectFirstDevice()
+    keymap = { 'up' : 'KEYCODE_DPAD_UP' , 'down' : 'KEYCODE_DPAD_DOWN' , \
+        'left' : 'KEYCODE_DPAD_LEFT' , 'right' : 'KEYCODE_DPAD_RIGHT' }
+    if action in ['up', 'down', 'left', 'right']:
+        key = keymap[action]
+        while num > 0:
+            device.press(key, 'DOWN_AND_UP')
+            num = num - 1
 
+def absCoordinates(percentCoord, type='x'):
+    try:
+        percentCoord = percentCoord.rstrip('%')
+        # attempt to get resolution
+        import testlib
+        if type == 'x':
+            resolution = testlib.settings.resX
+        if type == 'y':
+            resolution = testlib.settings.resY
+    except:
+        if type == 'x':
+            resolution = 480
+        if type == 'y':
+            resolution = 800
+    return str( int(percentCoord) * int(resolution) / 100)
 
 def touch(posX=0, posY=0, action='default'):
     """ 
         Touch on screen at co-ordinates (posX,posY)
+        @param posX integer value or % e.g. 50 or 50%
+        @param posY integer value or % e.g. 50 or 50%
     """
+    global device
+    keymap = { 'default' : 'DOWN_AND_UP', 'up' : 'UP', 'down' : 'DOWN' }
     posX = str(posX)
     posY = str(posY)
     # set default resolution
     resX = 480
     resY = 800
-
-    if posX.endswith('%') or posY.endswith('%'):
-        try:
-            # attempt to get resolution
-            import testlib
-            resX = testlib.testenv.resX
-            resY = testlib.testenv.resY
-        except:
-            print "assuming resolution 480x800"
-        if posX.endswith('%'):
-            posX = posX.rstrip('%')
-            posX = str( int(posX) * int(resX) / 100)
-        if posY.endswith('%'):
-            posY = posY.rstrip('%')
-            posY = str( int(posY) * int(resY) / 100)
-
-    cmd = ADB + 'shell "'
-    if isSimulator:
-        touch = \
-            'sendevent /dev/input/event0 3 0 ' + posX + ';' \
-            + 'sendevent /dev/input/event0 3 1 ' + posY + ';' \
-            + 'sendevent /dev/input/event0 1 330 1;'
-        release = \
-            'sendevent /dev/input/event0 0 0 0;' \
-            + 'sendevent /dev/input/event0 1 330 0;' \
-            + 'sendevent /dev/input/event0 0 0 0'
-    else:
-        touch = \
-            'sendevent /dev/input/event3 3 48 1;' \
-            + 'sendevent /dev/input/event3 3 53 ' + posX + ';' \
-            + 'sendevent /dev/input/event3 3 54 ' + posY + ';' \
-            + 'sendevent /dev/input/event3 0 2 0;' \
-            + 'sendevent /dev/input/event3 0 0 0;'
-        release = \
-            'sendevent /dev/input/event3 3 48 0;' \
-            + 'sendevent /dev/input/event3 0 2 0;' \
-            + 'sendevent /dev/input/event3 0 0 0'
-
-    if action == 'down':
-        cmd = cmd + touch
-    elif action == 'up':
-        cmd = cmd + release
-    else:
-        cmd = cmd + touch + release
-    cmd = cmd + '"' 
-    os.system(cmd)
-
+    if posX.endswith('%') :
+        posX = absCoordinates(posX, 'x')
+    if posY.endswith('%'):
+        posY = absCoordinates(posY, 'y')
+    if device == '' :
+        connectFirstDevice()
+    device.touch(int(posX), int(posY), keymap[action])
 
 def drag(fromX=0, fromY=0, toX=0, toY=0):
     """ 
         Move on touch screen from (fromX,fromY) to (toX, toY)
+        @param posX integer value or % e.g. 50 or 50%
+        @param posY integer value or % e.g. 50 or 50%
     """
-    if isSimulator:
-        release = 'sendevent /dev/input/event0 0 0 0'
-    else:
-        release = 'sendevent /dev/input/event3 0 2 0;' \
-            + 'sendevent /dev/input/event3 0 0 0' 
-    os.system(ADB + 'shell "' + release + '"')
-
-    if isSimulator:
-        cmd = ADB + 'shell "' \
-            + 'sendevent /dev/input/event0 3 0 ' + str(fromX) + ';' \
-            + 'sendevent /dev/input/event0 3 1 ' + str(fromY) + ';' \
-            + 'sendevent /dev/input/event0 1 330 1;' \
-            + 'sendevent /dev/input/event0 0 0 0;'
-    else:
-        cmd = ADB + 'shell "' \
-            + 'sendevent /dev/input/event3 3 48 1;' \
-            + 'sendevent /dev/input/event3 3 50 2;' \
-            + 'sendevent /dev/input/event3 3 53 ' + str(fromX) + ';' \
-            + 'sendevent /dev/input/event3 3 54 ' + str(fromY) + ';' \
-            + 'sendevent /dev/input/event3 0 2 0;' \
-            + 'sendevent /dev/input/event3 0 0 0;'
-    diffX = toX - fromX
-    diffY = toY - fromY
-     
-    stepX = -200
-    stepY = -200
-    if diffX > 0:
-        stepX = abs(stepX) 
-    if diffY > 0:
-        stepY = abs(stepY)
-    totalX = diffX / stepX
-    totalY = diffY / stepY
-
-    while ((totalX > 0) or (totalY > 0)):
-        if totalX > 0:
-            totalX = totalX - 1
-            fromX = fromX + stepX
-            if isSimulator:
-                cmd = cmd + 'sendevent /dev/input/event0 3 0 ' + str(fromX) + ';'
-            else:
-                cmd = cmd \
-                    + 'sendevent /dev/input/event3 3 48 1;' \
-                    + 'sendevent /dev/input/event3 3 50 2;' \
-                    + 'sendevent /dev/input/event3 3 53 ' + str(fromX) + ';'
-
-        if totalY > 0:
-            totalY = totalY - 1
-            fromY = fromY + stepY
-            if isSimulator:
-                cmd = cmd + 'sendevent /dev/input/event0 3 1 ' + str(fromY) + ';'
-            else:
-                cmd = cmd + 'sendevent /dev/input/event3 3 54 ' + str(fromY) + ';'
-        if isSimulator:
-            cmd = cmd + 'sendevent /dev/input/event0 0 0 0;'
-        else:
-            cmd = cmd + 'sendevent /dev/input/event3 0 2 0;sendevent /dev/input/event3 0 0 0;'
-
-    if isSimulator:
-        cmd = cmd \
-            + 'sendevent /dev/input/event0 3 0 ' + str(toX) + ';' \
-            + 'sendevent /dev/input/event0 3 1 ' + str(toY) + ';' \
-            + 'sendevent /dev/input/event0 0 0 0;' \
-            + 'sendevent /dev/input/event0 1 330 0;'
-    else:
-        cmd = cmd \
-            + 'sendevent /dev/input/event3 3 48 1;' \
-            + 'sendevent /dev/input/event3 3 50 2;' \
-            + 'sendevent /dev/input/event3 3 53 ' + str(toX) + ';' \
-            + 'sendevent /dev/input/event3 3 54 ' + str(toY) + ';' \
-            + 'sendevent /dev/input/event3 0 2 0;' \
-            + 'sendevent /dev/input/event3 0 0 0;' + release
-    os.system(cmd + '"')
+    global device
+    fromX = str(fromX)
+    fromY = str(fromY)
+    toX = str(toX)
+    toY = str(toY)
+    if fromX.endswith('%') :
+        fromX = absCoordinates(fromX, 'x')
+    if fromY.endswith('%'):
+        fromY = absCoordinates(fromY, 'y')
+    if toX.endswith('%') :
+        toX = absCoordinates(toX, 'x')
+    if toY.endswith('%'):
+        toY = absCoordinates(toY, 'y')
+    if device == '' :
+        connectFirstDevice()
+    device.drag((int(fromX), int(fromY)), (int(toX), int(toY)), 0.5, 5)
 
 def record(seconds=5, returnResult=False):
     """ 
-        Record events on simulator 
+        Record events 
         @param seconds length of recording time in seconds
     """
     # Start recording i.e. get events
+    if id is None:
+        adb = 'adb' 
+    else:
+        adb = 'adb -s ' + id
     eventsfile = 'recordfile'
     os.system('> ' + eventsfile)
-    os.system(ADB + 'shell getevent >& ' + eventsfile + ' &')
+    os.system(adb + ' shell getevent >& ' + eventsfile + ' &')
     time.sleep(seconds)
 
     # Kill recorder after time elapsed
@@ -411,7 +209,7 @@ def record(seconds=5, returnResult=False):
     eventslen = len(events)
     returnList = []
     while index < eventslen:
-        translatedLine = translate.translate(events[index])
+        translatedLine = translate(events[index])
         if translatedLine.startswith('sendevent') :
             returnList.append(translatedLine.strip())
         index = index + 1
@@ -436,7 +234,7 @@ def striplist(l):
 
 def playback(events='playbackfile'):
     """ 
-        Playback events on simulator 
+        Playback events
     """
     if len(events) < 30:
         # events is a filename
@@ -450,10 +248,14 @@ def playback(events='playbackfile'):
     # run subset of commands
     eventslen = len(events)
     index = 0
-    cmdshell = ADB + 'shell "'
-    cmd = cmdshell
     count = 0
     menuKey = False
+    if id is None:
+        adb = 'adb' 
+    else:
+        adb = 'adb -s ' + id
+    cmdshell = adb + ' shell "'
+    cmd = cmdshell
     while index < eventslen:
         event = events[index]
         cmd = cmd + event + ';'
@@ -483,56 +285,82 @@ def playback(events='playbackfile'):
         cmd = cmd + '"'
         os.system(cmd)
         time.sleep(3)
+        
+def connect(serialnum):
+    """ connect to new serialnum """
+    global device
+    global id
+    if device != '' :
+        device = ''
+    id = serialnum
+    device = MonkeyRunner.waitForConnection(20, id)
+    return device
 
-def setOrientation(deviceOrientation='portrait'):
-    """ Set orientation """
-    global orientation
-    orientation = deviceOrientation
-
-def setDevice(serial='emulator-5554'):
-    """Switch between different devices"""
-    global ADB
-    global serialnum
-    serialnum = serial 
-    ADB='adb -s ' + serialnum + ' '
-    global isSimulator
-    if serialnum.find('emulator') < 0:
-        isSimulator=False
+def connectFirstDevice():
+    """ connects to first device or simulator  """
+    global device
+    global id
+    if id is None:
+        device = MonkeyRunner.waitForConnection(20)
     else:
-        isSimulator=True
+        device = MonkeyRunner.waitForConnection(20, id)
+    return device
 
 def screenshot(imagefile='test'):
-    """Takes screenshot of current connect device or emulator"""
-    global serialnum
-    serial = ''
-    if len(serialnum) <> 0:
-        serial = '-s ' + serialnum + ' '
-    classpath = os.getenv('CLASSPATH')
-    if classpath is None:
-        classpath = ''
-    path = os.getenv('PATH')
-    if path.find('Program Files') >= 0:
-        # Windows
-        classpath='ddmlib.jar;screenshot.jar;..\common\ddmlib.jar;..\common\screenshot.jar;' + classpath
-    else:
-        # Mac
-        classpath='ddmlib.jar:screenshot.jar:../common/ddmlib.jar:../common/screenshot.jar:' + classpath
-
-    cmd="java -cp '" + classpath + "' com.android.screenshot.Screenshot " + serial + imagefile + '.png'
-
-    os.system(cmd)
+    """ Takes screenshot of current connection of device or emulator """
+    global device
+    if device == '' :
+        connectFirstDevice()
+    image = device.takeSnapshot()
     try:
         import testlib
-        testoutput = testlib.testenv.testoutput
-        os.system('mv ' + imagefile + '.png ' + testoutput)
-        #print imagefile + '.png is saved to ' + testoutput
+        testoutput = testlib.settings.testoutput
+        filepath = os.path.join(testoutput, imagefile + '.png')
+        # create testoutput if does not exists
+        if not os.path.exists(testoutput):
+           os.makedirs(testoutput) 
+        image.writeToFile(filepath, 'png')
+        print imagefile + '.png is saved to ' + filepath
     except:
+        filepath = imagefile + '.png'
+        image.writeToFile(filepath, 'png')
         print imagefile + '.png is saved to current directory'
 
 def launch(appActivity):
-    """Launch your application"""
-    if appActivity is None:
-        print "Usage: Provide activityname e.g. com.package.name/com.package.name.ActivityName"
-    else:
-        cmd = ADB + 'shell am start -n ' + appActivity
-        os.system(cmd)
+    """ Launch your application """
+    global device
+    if device == '' :
+        connectFirstDevice()
+    #device.startActivity(appActivity)
+    device.shell(' am start -n ' + appActivity)
+
+def translate(inputString):
+    """
+       Translates an list of adb getevents to adb sendevent for playback
+       E.g.
+          Input  : /dev/input/event0: 0001 00e5 00000001
+          Output : sendevent /dev/input/event0 1 229 1
+    """
+    colonSplit = inputString.split(':')
+    if len(colonSplit) < 2:
+        return ''
+    spaceSplit = colonSplit[1].split()
+    if len(spaceSplit) < 3:
+        return ''
+    base = 16
+    command = 'sendevent ' 
+
+    deviceList = colonSplit[0].split('/')
+    device = '/' + deviceList[1] + '/' + deviceList[2]  + '/' + deviceList[3] \
+        +  ' '
+    type = str(int(spaceSplit[0], base)) + ' '
+    code = int(spaceSplit[1], base)
+    value = str(int(spaceSplit[2], base))
+
+    code = str(code) + ' '
+    outputString = command + device + type + code + value
+    return outputString
+
+def getDevice():
+    """ Returns MonkeyDevice """
+    return device

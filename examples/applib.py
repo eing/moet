@@ -9,6 +9,10 @@
 # http://www.eclipse.org/legal/epl-v10.html
 #
 
+__version__ = '1.0'
+__license__ = "EPL 1"
+__author__ = [ 'Eing Ong @eingong' ]
+
 """
     Useful classes and functions for the app i.e. Contact Manager
     using OO concepts.

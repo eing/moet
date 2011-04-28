@@ -13,73 +13,52 @@
     Common test library for all devices.
 """
 
+__version__ = '1.0'
+__license__ = "EPL 1"
+__author__ = [ 'Eing Ong @eingong' ]
+
 import os
-import logger
-
-log = logger.getLogger('testlib')
-
-class TestException(Exception):
-    """ Application base class for test exceptions """
-    def __init__(self, ErrorMsg):
-        self.ErrorMsg = ErrorMsg
-
-    def __repr__(self):
-        return repr('[' + self.ErrorCode + '] ' + self.ErrorMsg)
-         
-    def getErrorMessage(self):
-        return self.ErrorMsg
-
-    def getErrorCode(self):
-        return self.ErrorCode
-
-
-# Setup and Envirnoment Exceptions
-class SetupException(TestException): ErrorCode = 100
-class EnvironmentException(TestException): ErrorCode = 150
-class OSSystemException(TestException): ErrorCode = 151
-class TestITException(TestException) : ErrorCode = 160
-
-# Test Execution Exceptions
-class TestExecutionException(TestException): ErrorCode = 200
-class TestDataException(TestException): ErrorCode = 201
-class BatchToolException(TestException): ErrorCode = 301
-class BatchRunException(TestException): ErrorCode = 302
-
-# Test Verification Exceptions
-class TestVerificationException(TestException): ErrorCode = 400
-class ImageVerificationException(TestException): ErrorCode = 402
-class MissingImageFileException(TestException): ErrorCode = 403
 
 class testEnv:
-    """ Reads in environment variables used in Test Framework """
+    """ Reads in environment variables used in tests. 
+        Examples:
+        MOET - /Users/<name>/moet
+        MOET_DEVICE - bb8130/bb9550/android/iphone
+        MOET_OS - 5.0.0/2.2/4.2
+        MOET_RESOLUTION - 240x320/320x480/480x800
+        MOET_RESULTS - $MOET/results
+        MOET_MODE - CAPTURE/TEST/DEMO
+        IMAGE_TOOL (if not in system PATH)
+    """
 
-    runOptionList = ('CAPTURE', 'TEST')
+    runOptionList = ('CAPTURE', 'TEST', 'DEMO')
 
     def __init__(self):
-        self.device = os.getenv('DEVICE')
-        self.deviceOS = os.getenv('DEVICE_OS')
         self.devicePin = os.getenv('DEVICE_PIN')
         self.devicePort = os.getenv('DEVICE_PORT')
         self.rimHome = os.getenv('RIM_HOME')
         self.version = os.getenv('Version')
         self.imageTool = os.getenv('IMAGE_TOOL')
-        self.mobileEnv= os.getenv('MOBILE_ENV')
-        self.mobileDevice = os.getenv('MOBILE_DEVICE').lower()
-        self.testroot = os.getenv('TEST_ROOT')
-        self.runOption = os.getenv('RUN_OPTION')
-        self.resources = self.testroot + '/resources/' + self.mobileDevice + '/'
-
-        self.fullDevice = self.device + '-' + self.deviceOS
-        self.testoutput = os.getenv('TEST_OUTPUT')
-        self.res = os.getenv('DEVICE_RESOLUTION')
-        self.resX = self.res.split('x')[0]
-        self.resY = self.res.split('x')[1]
-
-    def getDevice(self):
-        return self.device
-
-    def setDevice(self, device):
-        self.device = device
+        self.testroot = os.getenv('MOET')
+        if not self.testroot is None:
+            self.resources = os.path.join(self.testroot, 'resources')
+        self.mobileDevice = os.getenv('MOET_DEVICE')
+        if not self.mobileDevice is None:
+            self.fullDevice = self.mobileDevice
+            self.mobileDevice = self.mobileDevice.lower()
+            self.resources = os.path.join(self.resources, self.mobileDevice)
+        self.deviceOS = os.getenv('MOET_OS')
+        if not self.deviceOS is None:
+            self.fullDevice = self.fullDevice + '-' + self.deviceOS 
+        self.runOption = os.getenv('MOET_MODE')
+        self.orientation = os.getenv('ORIENTATION')
+        self.testoutput = os.getenv('MOET_RESULTS')
+        self.res = os.getenv('MOET_RESOLUTION')
+        if not self.res is None:
+            self.resX = self.res.split('x')[0]
+            self.resY = self.res.split('x')[1]
+        if not self.res is None:
+            self.resources = os.path.join(self.resources, self.res)
 
     def setDeviceOS(self, deviceOS):
         self.deviceOS = deviceOS
@@ -92,12 +71,6 @@ class testEnv:
 
     def getImageTool(self):
         return self.imageTool
-
-    def getMobileEnv(self):
-        return self.mobileEnv
-
-    def setMobileEnv(self, mobileEnv):
-        self.mobileEnv = mobileEnv
 
     def getRunOption(self):
         if isinstance(self.runOption, str) == False or self.runOption == '':
@@ -140,13 +113,11 @@ class testEnv:
         else:
             import bb
             deviceClass = bb.BlackBerryImpl()
-        log.debug('Device is ' + mobileDevice)
         return deviceClass
 
     def updateEnv(self, variable, value):
         """ Update existing environment variable with value """
 
-        log.debug('Updating ' + variable + ' to ' + value);
         keys = os.environ.keys()
         from re import search
         for key in keys:
@@ -154,13 +125,5 @@ class testEnv:
                 os.environ[variable]=value
         
 
-""" Create an instance of testenv """
-testenv = testEnv()
-
-if __name__ == '__main__':
-    print testenv.getDeviceClass()
-    print testenv.testoutput
-    print testenv.resources
-    print testenv.res
-    print testenv.resX
-    print testenv.resY
+""" Create an instance of settings """
+settings = testEnv()

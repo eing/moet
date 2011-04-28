@@ -10,18 +10,20 @@
 #
 
 import unittest
+import os
+import sys
+sys.path.append('.')
+sys.path.append(os.path.join(os.getcwd(), '..', 'common'))
 import testlib
 import imagelib
 import applib
-import os
-
 
 class AddContactDemoTest(unittest.TestCase):
     """
         Add contact test for demo with only 1 test.
     """
 
-    device = testlib.testenv.getDeviceClass()
+    device = testlib.settings.getDeviceClass()
     lastname = 'Regression'
     phone = '6501234567'
     email = 'test6509876543@t.co.uk'
@@ -56,8 +58,7 @@ class AddContactDemoTest(unittest.TestCase):
 
     def validate(self, testname=None):
         """Verify that add contact succeed by viewing contact details"""
-        self.assertTrue(imagelib.compare(self.device, self.firstname, "+0+10%", 1000))
-
+        self.assertTrue(imagelib.compare(self.firstname, self.device, "100%x100%+0%+10%", 1500))
 
 
 if __name__ == '__main__':

@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# copy moet to /usr/local/bin
+echo "#!/bin/sh" > moet_tmp
+echo "export MOET=`pwd`" >> moet_tmp
+cat moet_setup >> moet_tmp
+sudo cp moet_tmp /usr/local/bin/moet
+sudo chmod a+rwx /usr/local/bin/moet
+rm moet_tmp
+
+# check if adb is in system path
+ADB=`which adb`
+if [ $? -gt 0 ]; then
+    echo 'If you are using android, pls add <yourAndroidSDK>/platform-tools to your PATH before running this script.'
+    echo "e.g. export PATH='/Users/<you>/android-sdk-mac_x86/platform-tools:\$PATH'"
+    exit -1
+fi
+
+# setup for android
+ANDROIDLIB=$ADB/../../tools/lib/Lib
+if [ ! -d $ANDROIDLIB ]; then
+    mkdir $ANDROIDLIB
+fi
+cp common/androidlib.py $ANDROIDLIB
