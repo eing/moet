@@ -1,26 +1,34 @@
 This mobile test framework requires the following to be installed:
 
-- python 2.5.2 (if Windows OS install cygwin)
-- device simulator (for BB, install JDE NOT just plain vanilla simulator)
+- device simulator 
+   * for BB, install JDE NOT just plain vanilla simulator
+   * for Android, add adb to your shell path (see below)
 - ImageMagick 6.5.7-Q8 (if using image verification imagelib.py) 
+   * add the bin folder to your shell path
 - JDK 6.0
 
-To use bblib.py and androidlib.py
-1. Run emulator, and python 
-2. For blackberry, in python shell: from bblib.py import *
-3. For android, in python shell: from androidlib.py import *
+e.g. ~/.bash_login in Mac
+export IMAGE_TOOL=$HOME/ImageMagick-6.6.7/bin
+export PATH=.:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$IMAGE_TOOL:$PATH
+export DYLD_LIBRARY_PATH=$IMAGE_TOOL/../lib
 
-To run tests
-1. Set variables in <device>.sh (e..g. bb.sh), according to your env.
-2. source <device>.sh
-3. Run tests using python <test>.py
+INSTALL on Mac for Android and iPhone
+-------------------------------------
+# setup will copy moet to /usr/local/bin and copy androidlib.py to 
+# $ANDROID_HOME/tools/lib/Lib
+
+> setup 
+Password: <enter your system password>
+
+That's it!
 
 ------------------------- OVERVIEW --------------------------
 
-$TEST_ROOT
+$MOET
 |
 |__README
 |__COPYING : COPYRIGHT information
+|__setup   : setup script for Mac (Windows to come)
 |
 |__common : shared library that all applications can use
 |  |__androidlib.py : common android control functions
@@ -28,26 +36,32 @@ $TEST_ROOT
 |  |__imagelib.py   : image functions use for test verification
 |  |__logger.py     : logging utility to file $TEST_OUTPUT/run.log
 |  |__testlib.py    : exceptions, env settings, and get device
+|  |__iphone
+|        |_Lib
+|            |_iphonelib.py
 |
 |__install   : Place your application install source files here
 |  |__<version> : e.g. 1.1.0
 |     |__ jads, cods, jars (blackberry)
 |
-|__results : Test results $TEST_OUTPUT
-|  |__8300-4.5.0-<date> : results in $DEVICE-$DEVICE_OS-$DATE format
+|__results : Test results $MOET_RESULTS
+|  |__8300-4.5.0-<date> : results in $MOET_DEVICE-$MOET_OS-$MOET_RESULTSDATE
 |
 |__resources      : resources include snapshots, device specific scripts
 |  |__bb
-|  |  |__320x240  : similar to $DEVICE_RESOLUTION
+|  |  |__320x240  : similar to $MOET_RESOLUTION
 |  |
 |  |__android
-|     |__480x800  : similar to $DEVICE_RESOLUTION
+|     |__480x800  : similar to $MOET_RESOLUTION
+|
+|  |__iphone
+|     |__320x480  : similar to $MOET_RESOLUTION
 |
 |__tests : End-to-End tests
    |__testbase.py : business rules interface class for all devices to implement
    |__android.py     : android implementation for testbase  
    |__bb.py          : blackberry implementation for testbase  
-   |__bb.sh          : environment settings for tests to run in
+   |__iphone.py      : iphone implementation for testbase  
    |__BAT            : Acceptance tests that can be run for bb, android
    |__only_bb        : Tests only applicable on blackberry
    |__only_android   : Tests only applicable on android

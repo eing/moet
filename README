@@ -1,22 +1,55 @@
 ////////////////////////////////////////////
 
-    MOET - (MO)bile (E)nd-to-end (T)est
+    MOET - (MO)bile (E)xploratory (T)esting
 
 ////////////////////////////////////////////
 
-"moet" contains libraries for mobile simulators (Blackberry, Android so far)
-to control behavior of the simulator and your mobile application using a common
-python scripting environment. Mobile demos and tests can be built easily without
-dealing with how each device simulator is implemented. This will not incur any 
-costs such as acquiring a device and at the same time, achieve high quality of 
-native mobile applications.
+Moet contains libraries for mobile simulators - Blackberry, Android, iPhone.
+i.e. bblib.py, androidlib.py (works on physical devices too), and iphonelib.py
 
-Tests are written such that they can be reused and run against all devices. 
+Tests are written such that they can be reused and run on BB, Android, and iPhone. 
 This is done by identifying customer use cases such as login, search, create 
-contact etc. and each use case will utilize the simulator library controls. 
-Device type is determined at runtime, based on the environment setting.
-
-Depending on the device support, tests may even execute with the physical device
-in addition to the simulator.
+contact etc. and each use case will utilize the MOET library controls. 
+Device type is determined at runtime.
 
 Please read the file INSTALL for installation and usage instructions.
+
+NOTE. V1.0 checkin is a breaking change for BlackBerry and is only supported 
+on the Mac for Android and iPhone.
+
+>> moet 
+usage : 
+moet -d iphone   [-os os]  [-ic] [file]
+moet -d android  [-os os]  [-ic] [-res resolution] [-ic] [-s serial]   [file]
+moet -d bb<model> -os <os> [-ic] [-res resolution] [-ic] [-s pin:port] [file]
+For interactive mode,   use -i
+For image capture mode, use -c
+
+>> moet -h -d android
+available android commands:
+backspaces(num), enter(string), scroll(up/down/left/right, num)
+back(), home(), menu(), record(), playback()
+connect(serial), getDevice(), launch(appActivity)
+touch(x,y), drag(fromX, fromY, toX, toY), screenshot(filename)
+ 
+>> moet -h -d iphone
+available iphone commands:
+backspaces(num), enter(string), scroll(up/down/left/right, num)
+done(), home(), next(), previous()
+touch(x,y), drag(fromX, fromY, toX, toY), screenshot(filename)
+
+# interactive mode
+>> moet -d -iphone -i
+>> moet -d -android -i
+
+# capture mode - captures screenshots for your first test run
+# results are saved in $MOET/results/$MOET_DEVICE-$MOET_OS-$MOET_RESULTSDATE
+>> moet -d -iphone testdemo.py
+>> moet -d -android testdemo.py
+
+# test mode
+>> moet -d -android testdemo.py
+>> moet -d -android -os 2.2.1 -res 320x480 testdemo.py
+>> moet -d -android -os 2.2.1 -res 320x480 -s HTC12345 testdemo.py
+>> moet -d -iphone testdemo.py
+>> moet -d -iphone -os 4.2 testdemo.py

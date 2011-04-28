@@ -9,11 +9,18 @@
 # http://www.eclipse.org/legal/epl-v10.html
 #
 
+__version__ = '1.0'
+__license__ = "EPL 1"
+__author__ = [ 'Eing Ong @eingong' ]
+
 import unittest
+import os
+import sys
+sys.path.append('.')
+sys.path.append(os.path.join(os.getcwd(), '..', 'common'))
 import testlib
 import imagelib
 import applib
-import os
 
 
 class AddContactTest(unittest.TestCase):
@@ -21,7 +28,7 @@ class AddContactTest(unittest.TestCase):
         Add contact test 
     """
 
-    device = testlib.testenv.getDeviceClass()
+    device = testlib.settings.getDeviceClass()
     lastname = 'Regression'
     phone = '6501234567'
     email = 'test6509876543@t.co.uk'

@@ -9,6 +9,10 @@
 # http://www.eclipse.org/legal/epl-v10.html
 #
 
+__version__ = '1.0'
+__license__ = "EPL 1"
+__author__ = [ 'Eing Ong @eingong' ]
+
 from iphonelib import *
 import os
 import time
@@ -47,15 +51,17 @@ class iPhoneImpl(appbase.AppInterface):
         time.sleep(1)
 
         # add phone
-        touchImage('EntryMobile')
-        enter(contact.getPhone())
-        time.sleep(1)
+        if contact.getPhone() != '':
+            touchImage('EntryMobile')
+            enter(contact.getPhone())
+            time.sleep(1)
       
         # add email
-        scroll('down', 3)
-        touchImage('EntryEmail')
-        enter(contact.getEmail())
-        time.sleep(1)
+        if contact.getEmail() != '':
+            scroll('down', 3)
+            touchImage('EntryEmail')
+            enter(contact.getEmail())
+            time.sleep(1)
         
         # save or cancel
         if options[0] == 'cancel':
@@ -88,6 +94,7 @@ class iPhoneImpl(appbase.AppInterface):
 
         # display delete contact
         scroll('down', 3)
+        time.sleep(2)
 
         # touchImage delete contact
         touchImage('ButtonDeleteContact')
