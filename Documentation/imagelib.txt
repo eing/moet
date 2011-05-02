@@ -1,23 +1,17 @@
+
 Help on module imagelib:
 
 NAME
     imagelib
 
 FILE
-    /cygdrive/c/moet/common/imagelib.py
+    moet/common/imagelib.py
 
 DESCRIPTION
-    Compare tool takes a snapshot of the current image and compare 
-    with the expected image. 
-    (Optional) Cropped settings determines area to compare 
-               There are a few crop options -
-               1. (Preferred - resolution independent) 100%x80%+10%+20% 
-               2. 320x90+0+0 
-               3. +0+90
-    (Optional) Tolerance is the level of error for failing compare
+    # http://www.eclipse.org/legal/epl-v10.html
 
 FUNCTIONS
-    compare(device, image, cropSettings=None, tolerance=500)
+    compare(image, device=None, cropSettings=None, tolerance=500)
         Compare images using cropped settings and tolerance level
     
     parseCropSettings(cropSettings, resX, resY)
@@ -30,6 +24,24 @@ FUNCTIONS
         parseCropSettings('+10%+0', '320', '240')
 
 DATA
-    log = <logging.Logger instance>
+    __author__ = ['Eing Ong @eingong']
+    __license__ = 'EPL 1'
+    __version__ = '1.0'
+    imageCmd = ''
+    image_tool = ''
+    path = '/Library/Frameworks/Python.framework/Versions/Cu...s/eong/sand...
+    resX = ''
+    resY = ''
+    resourcesDir = '.'
+    runOption = 'TEST'
+    subDir = ''
+    testEnv = <testlib.testEnv instance at 0x4c1a80>
+    test_output = None
+
+VERSION
+    1.0
+
+AUTHOR
+    ['Eing Ong @eingong']
 
 
