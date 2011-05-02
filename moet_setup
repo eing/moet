@@ -23,7 +23,7 @@ function usage {
     echo 'usage : '
     echo 'moet -d iphone   [-os os]  [-ic] [file]'
     echo 'moet -d android  [-os os]  [-ic] [-res resolution] [-ic] [-s serial]   [file]'
-    echo 'moet -d bb<model> -os <os> [-ic] [-res resolution] [-ic] [-s pin:port] [file]'
+    #echo 'moet -d bb<model> -os <os> [-ic] [-res resolution] [-ic] [-s pin:port] [file]'
     echo 'For interactive mode,   use -i'
     echo 'For image capture mode, use -c'
     echo
@@ -34,6 +34,7 @@ function iphone_usage {
     echo 'backspaces(num), enter(string), scroll(up/down/left/right, num)'
     echo 'done(), home(), next(), previous()'
     echo 'touch(x,y), drag(fromX, fromY, toX, toY), screenshot(filename)'
+    echo 'zoom(in/out, x, y, zoomDepth), picker(num, num, num)'
 }
 
 function android_usage {

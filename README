@@ -21,7 +21,6 @@ on the Mac for Android and iPhone.
 usage : 
 moet -d iphone   [-os os]  [-ic] [file]
 moet -d android  [-os os]  [-ic] [-res resolution] [-ic] [-s serial]   [file]
-moet -d bb<model> -os <os> [-ic] [-res resolution] [-ic] [-s pin:port] [file]
 For interactive mode,   use -i
 For image capture mode, use -c
 

@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
 # copy moet to /usr/local/bin
-echo "#!/bin/sh" > moet_tmp
+echo "#!/bin/bash" > moet_tmp
 echo "export MOET=`pwd`" >> moet_tmp
 cat moet_setup >> moet_tmp
 sudo cp moet_tmp /usr/local/bin/moet
@@ -17,7 +17,8 @@ if [ $? -gt 0 ]; then
 fi
 
 # setup for android
-ANDROIDLIB=$ADB/../../tools/lib/Lib
+ADB=`dirname $ADB`
+ANDROIDLIB=$ADB/../tools/lib/Lib
 if [ ! -d $ANDROIDLIB ]; then
     mkdir $ANDROIDLIB
 fi
