@@ -37,6 +37,7 @@ available iphone commands:
 backspaces(num), enter(string), scroll(up/down/left/right, num)
 done(), home(), next(), previous()
 touch(x,y), drag(fromX, fromY, toX, toY), screenshot(filename)
+zoom(in/out, x, y, zoomDepth), picker(num, num, num)
 
 # interactive mode
 >> moet -d -iphone -i

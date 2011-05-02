@@ -24,6 +24,7 @@ Settings.ActionLogs=False
 Settings.InfoLogs=False
 Settings.DebugLogs=False
 
+
 # Add image paths and optimize image matching to just iphone simulator
 try:
     import os, sys
@@ -47,7 +48,7 @@ try:
     pathCheck = True 
 
     originalLoc = Env.getMouseLocation()
-    region = find("iPhoneHeader.png")
+    region = find('iPhoneHeader.png')
     myRect = region.getRect()
     (regX, regY, w, h) = (myRect.x - 10, myRect.y, myRect.width + 10, myRect.height + 20)
     region = Region(regX, regY, w, 700)
@@ -69,11 +70,16 @@ def resetCurrentLocation():
     if demo:
         click(originalLoc)
 
-def home(num=1):
+def home():
     """ Enter Home button """
-    while num > 0:
-        num = num - 1
-    region.click("HomeButton.png")    
+    if demo:
+         click("iPhoneHeader.png")
+    keyDown(Key.SHIFT)
+    keyDown(Key.META)
+    keyDown('h')
+    keyUp(Key.META)
+    keyUp(Key.SHIFT)
+    keyUp('h')
     resetCurrentLocation()
 
 def backspaces(num = 1):
@@ -91,6 +97,30 @@ def enter(string):
          click("iPhoneHeader.png")
     type(string)
     resetCurrentLocation()
+
+def zoom(action='out',fromX=50, fromY=300, step=1):
+    if demo:
+         click("iPhoneHeader.png")
+    x = fromX - (10 * step)
+    if x < 0:
+        x = 10
+    y = fromY + (10 * step) 
+    if y > 480:
+        y = 450
+    if action == 'out':
+        toX = fromX
+        toY = fromY
+        fromX = x
+        fromY = y
+    else:
+        toX = x
+        toY = y
+    region.keyDown(Key.ALT)
+    region.drag(Location(regX + screenOffsetX + fromX, regY + screenOffsetY + fromY))
+    region.dropAt(Location(regX + screenOffsetX + toX, regY + screenOffsetY + toY))
+    region.keyUp(Key.ALT)
+    resetCurrentLocation()
+
 
 def absCoordinates(percentCoord, type='x'):
     percentCoord = percentCoord.rstrip('%')
@@ -113,7 +143,7 @@ def touch(x, y):
         posX = absCoordinates(posX, 'x')
     if posY.endswith('%'):
         posY = absCoordinates(posY, 'y')
-    region.click(Location(regX + screenOffsetX + posX, regY + screenOffsetY + posY))
+    region.click(Location(regX + screenOffsetX + int(posX), regY + screenOffsetY + int(posY)))
     resetCurrentLocation()
 
 def touchImage(image):
@@ -144,8 +174,8 @@ def drag(fromX, fromY, toX, toY):
         toX = absCoordinates(toX, 'x')
     if toY.endswith('%'):
         toY = absCoordinates(toY, 'y')
-    region.drag(Location(regX + screenOffsetX + fromX, regY + screenOffsetY + fromY))
-    region.dropAt(Location(regX + screenOffsetX + toX, regY + screenOffsetY + toY))
+    region.drag(Location(regX + screenOffsetX + int(fromX), regY + screenOffsetY + int(fromY)))
+    region.dropAt(Location(regX + screenOffsetX + int(toX), regY + screenOffsetY + int(toY)))
     resetCurrentLocation()
 
 def previous():
@@ -221,6 +251,52 @@ def screenshot(filename='test'):
     except:
         shutil.move(image, os.path.join(os.getcwd(), filename))
         print filename + ' is saved to current directory'
+
+def pickerScroll(fieldX, scroll):
+    import time
+    if scroll < 0:
+           scroll = abs(scroll)
+           while scroll > 10:
+               scroll = scroll - 10
+               drag(fieldX, '60%', fieldX, '105%')
+               time.sleep(1)
+           dragSize = [ ('80%','80%'), ('55%','65%'), ('55%', '75%'), ('55%','85%'), \
+               ('55%','95%'), ('55%','100%'), ('60%', '102%'), ('60%', '103%'), \
+               ('65%','107%'), ('58%','104%'), ('60%', '105%')]
+           drag(fieldX, dragSize[scroll][0], fieldX, dragSize[scroll][1])
+    elif scroll > 0:
+           while scroll > 10:
+               scroll = scroll - 10
+               drag(fieldX, '90%', fieldX, '1%')
+               time.sleep(1)
+           dragSize = [ ('80%','80%'), ('90%','80%'), ('90%', '70%'), ('90%','60%'), \
+                   ('90%','50%'), ('90%','42%'), ('90%', '35%'), ('90%', '28%'), \
+                   ('90%', '20%'), ('90%', '10%'), ('90%', '1%')]
+           drag(fieldX, dragSize[scroll][0], fieldX, dragSize[scroll][1])
+
+
+def picker(field1, field2=0, field3=0):
+    """ 
+        Use for selecting UI scroll pickers (e.g. datePicker)
+        @param field1 Leftmost field. 1 to move down one notch, -1 to move up a notch.
+        @param field2 Second field, default is 0
+        @param field3 Last field, default is 0
+    """
+    global demo
+    tmp = demo
+    demo = False
+    if (field1 != 0):
+       fieldX = '20%'
+       pickerScroll(fieldX, field1)
+    if field2 != 0:
+       fieldX = '70%'
+       pickerScroll(fieldX, field2)
+    if field3 != 0:
+       fieldX = '90%'
+       pickerScroll(fieldX, field3)
+    demo = tmp
+    resetCurrentLocation()
+   
 
 def setDemo(value=False):
     global demo
