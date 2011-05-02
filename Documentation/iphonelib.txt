@@ -1,0 +1,87 @@
+Help on module iphonelib:
+
+NAME
+    iphonelib
+
+FILE
+    /Users/eong/sandbox/moet/Documentation/iphonelib.py
+
+DESCRIPTION
+    An extension to Sikuli tool. 
+    For Sikuli IDE and documentation, pls refer to 
+    http://sikuli.org
+
+FUNCTIONS
+    absCoordinates(percentCoord, type='x')
+    
+    backspaces(num=1)
+        Enter backspaces
+    
+    cancel()
+        Click on Cancel in keyboard
+    
+    done()
+        Click on Done in keyboard
+    
+    drag(fromX, fromY, toX, toY)
+        Drag on screen from (fromX,fromY) to (toX, toY)
+        @param fromX integer value or % e.g. 50 or 50%
+        @param fromY integer value or % e.g. 50 or 50%
+        @param toX integer value or % e.g. 50 or 50%
+        @param toY integer value or % e.g. 50 or 50%
+    
+    enter(string)
+    
+    home()
+        Enter Home button
+    
+    next()
+        Click on Next in keyboard
+    
+    picker(field1, field2=0, field3=0)
+        Use for selecting UI scroll pickers (e.g. datePicker)
+        @param field1 Leftmost field. 1 to move down one notch, -1 to move up a notch.
+        @param field2 Second field, default is 0
+        @param field3 Last field, default is 0
+    
+    pickerScroll(fieldX, scroll)
+    
+    previous()
+        Click on Previous in keyboard
+    
+    resetCurrentLocation()
+    
+    screenshot(filename='test')
+        Saves screenshot to your current working directory or TEST_OUTPUT if exists
+    
+    scroll(action, numScrolls=1)
+        Scroll up, down, left, right numScroll times
+    
+    search()
+        Click on Search in keyboard
+    
+    setDemo(value=False)
+    
+    touch(x, y)
+        Touch on screen at co-ordinates (posX,posY)
+        @param posX integer value or % e.g. 50 or 50%
+        @param posY integer value or % e.g. 50 or 50%
+    
+    touchImage(image)
+        Touch on screen at image
+        @param image image file name
+    
+    zoom(action='out', fromX=50, fromY=300, step=1)
+
+DATA
+    __author__ = ['Eing Ong @eingong']
+    __license__ = 'EPL 1'
+    __version__ = '1.0'
+
+VERSION
+    1.0
+
+AUTHOR
+    ['Eing Ong @eingong']
+
+

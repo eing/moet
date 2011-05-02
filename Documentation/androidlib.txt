@@ -1,61 +1,80 @@
-Help on module androidlib:
+Pls add MOET to your environment setting
+E.g. Mac Terminal : export MOET=/Users/<youruserid>/moet
+E.g. Windows DOS  : set MOET=C:\moet
+Help on module a:
 
 NAME
-    androidlib - Library containing all Android device common functions.
+    androidlib.py
 
 FILE
-    /cygdrive/c/moet/common/androidlib.py
+    /Users/eong/sandbox/moet/Documentation/a.py
+
+DESCRIPTION
+    An extension to MonkeyRunner tool in Android SDK.
+    For MonkeyRunner documentation, pls refer to
+    http://developer.android.com/guide/developing/tools/monkeyrunner_concepts.html
 
 FUNCTIONS
     back()
-        Press back button in simulator
+        Press back button
     
     backspaces(num=1)
-        Enter backspaces into simulator
+        Enter backspaces
     
-    closeSession()
-        Close telnet session
+    connect(serialnum)
+        connect to new serialnum
+    
+    connectFirstDevice()
+        connects to first device or simulator
     
     drag(fromX=0, fromY=0, toX=0, toY=0)
         Move on touch screen from (fromX,fromY) to (toX, toY)
+        @param posX integer value or % e.g. 50 or 50%
+        @param posY integer value or % e.g. 50 or 50%
     
     enter(string=None)
-        Press enter or enter string in simulator
+        Press enter or enter string
     
-    executeKeyEvent(keycode, run=True)
-        Takes event integer keycode and excecute
+    getDevice()
+        Returns MonkeyDevice
     
     home()
-        Press home key in simulator
+        Press home key
+    
+    launch(appActivity)
+        Launch your application
     
     menu()
-        Press menu key in simulator
+        Press menu key
     
     playback(events='playbackfile')
-        Playback events on simulator
+        Playback events
     
     record(seconds=5, returnResult=False)
-        Record events on simulator 
+        Record events 
         @param seconds length of recording time in seconds
     
+    screenshot(imagefile='test')
+        Takes screenshot of current connection of device or emulator
+    
     scroll(action='left', num=1)
-        Press cursor keys (up, down, left, right) in simulator
-    
-    startSession(host='localhost', port='5554')
-        Start telnet session into Android simulator.
-        @param host : hostname, default localhost
-        @param port : telnet port, default 5554
-    
-    striplist(l)
+        Press cursor keys (up, down, left, right)
     
     touch(posX=0, posY=0, action='default')
         Touch on screen at co-ordinates (posX,posY)
+        @param posX integer value or % e.g. 50 or 50%
+        @param posY integer value or % e.g. 50 or 50%
 
 DATA
-    altkeys = {'!': 1, '"': 'e', '#': 3, '$': 4, '%': 5, '&': 7, "'": 'd',...
-    keycode = {',': 51, '.': 52, '/': 53, '0': 11, '1': 2, '2': 3, '3': 4,...
-    log = <logging.Logger instance>
-    session = None
-    testoutput = 'c:/moet/results/android-2.8-1'
+    __all__ = ['backspaces', 'home', 'menu', 'back', 'enter', 'scroll', 't...
+    __author__ = ['Eing Ong @eingong']
+    __license__ = 'EPL 1'
+    __version__ = '1.0'
+
+VERSION
+    1.0
+
+AUTHOR
+    ['Eing Ong @eingong']
 
 
