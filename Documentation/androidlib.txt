@@ -1,13 +1,8 @@
-Pls add MOET to your environment setting
-E.g. Mac Terminal : export MOET=/Users/<youruserid>/moet
-E.g. Windows DOS  : set MOET=C:\moet
-Help on module androidlib:
-
 NAME
     androidlib
 
 FILE
-    /Users/eong/sandbox/moet/Documentation/androidlib.py
+    moet/common/androidlib.py
 
 DESCRIPTION
     An extension to MonkeyRunner tool in Android SDK.

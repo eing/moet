@@ -290,10 +290,12 @@ def connect(serialnum):
     """ connect to new serialnum """
     global device
     global id
+    import time
     if device != '' :
         device = ''
     id = serialnum
-    device = MonkeyRunner.waitForConnection(20, id)
+    device = MonkeyRunner.waitForConnection(30, id)
+    print device
     return device
 
 def connectFirstDevice():
@@ -301,9 +303,10 @@ def connectFirstDevice():
     global device
     global id
     if id is None:
-        device = MonkeyRunner.waitForConnection(20)
+        device = MonkeyRunner.waitForConnection(30)
     else:
-        device = MonkeyRunner.waitForConnection(20, id)
+        device = MonkeyRunner.waitForConnection(30, id)
+    print device
     return device
 
 def screenshot(imagefile='test'):
