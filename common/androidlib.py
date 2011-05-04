@@ -16,7 +16,7 @@
     http://developer.android.com/guide/developing/tools/monkeyrunner_concepts.html
 """
 
-__version__ = '1.0'
+__version__ = '1.1'
 __license__ = "EPL 1"
 __author__ = [ 'Eing Ong @eingong' ]
 
