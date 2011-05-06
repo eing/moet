@@ -181,24 +181,29 @@ def record(seconds=5, returnResult=False):
     else:
         adb = 'adb -s ' + id
     eventsfile = 'recordfile'
+    eventsFileHandle = open(eventsfile, 'w')
     os.system('> ' + eventsfile)
-    os.system(adb + ' shell getevent >& ' + eventsfile + ' &')
+    cmd = adb + ' shell getevent >& ' + eventsfile + ' &'
+    import subprocess
+    adbProcess = subprocess.Popen(adb + ' shell getevent', shell=True, stdout=eventsFileHandle)
+    #os.system(adb + ' shell getevent >& ' + eventsfile + ' &')
     time.sleep(seconds)
+    eventsFileHandle.close()
 
     # Kill recorder after time elapsed
-    pidfile = 'pidfile'
-
-    # This is for cygwin
-    pscmd='ps -s '
-    if os.system(pscmd + ' >& /dev/null') > 0:
-        # For mac or unix
-        pscmd='ps '
-    os.system(pscmd + '| grep "shell getevent" >& ' + pidfile)
-    pidFileHandle = open(pidfile, 'r')
-    pid = pidFileHandle.read(20).split()[0]
-    pidFileHandle.close()
+    if (os.getenv('PATH').find('Program Files')) >= 0:
+        # windows
+        # This is for cygwin
+        #pscmd='ps -s '
+        os.system('cmd /C taskkill /F /IM adb')
+    else:
+        pids = subprocess.Popen(['ps','-A'], stdout=subprocess.PIPE)
+        out = pids.communicate()[0].splitlines()
+        for line in out:
+            if 'getevent' in line:
+                pid = int(line.split(None, 1)[0])
+                os.kill(pid, 9)
     print('... recording stopped')
-    os.system('kill -9 ' + pid)
 
     # Translate events for input
     eventsFileHandle = open(eventsfile, 'r')
@@ -223,7 +228,7 @@ def record(seconds=5, returnResult=False):
     eventsFileHandle.close()
  
     # clean up
-    os.system('rm ' + pidfile)
+    #os.system('rm ' + pidfile)
 
     # Return events for playback
     if returnResult:
@@ -302,7 +307,9 @@ def connectFirstDevice():
     """ connects to first device or simulator  """
     global device
     global id
-    if id is None:
+    if (id is None) or (device == ''):
+        # bug in monkeyrunner on the first connection to emulator, the first instance is bogus
+        device = MonkeyRunner.waitForConnection(30)
         device = MonkeyRunner.waitForConnection(30)
     else:
         device = MonkeyRunner.waitForConnection(30, id)

@@ -3,8 +3,11 @@ This mobile test framework requires the following to be installed:
 - device simulator 
    * for BB, install JDE NOT just plain vanilla simulator
    * for Android, add adb to your shell path (see below)
+   * for iPhone, install Sikuli: http://launchpad.net/sikuli/sikuli-x/x1.0-rc2/+download/Sikuli-X-1.0rc2-osx-10.6.dmg
+
 - ImageMagick 6.5.7-Q8 (if using image verification imagelib.py) 
    * add the bin folder to your shell path
+
 - JDK 6.0
 
 e.g. ~/.bash_login in Mac
@@ -20,7 +23,7 @@ INSTALL on Mac for Android and iPhone
 > setup 
 Password: <enter your system password>
 
-That's it!
+That's it! See README to run
 
 ------------------------- OVERVIEW --------------------------
 
