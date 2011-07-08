@@ -27,6 +27,11 @@ import time
 device = ''
 id = None
 
+# from androidlib import * will import these methods
+__all__ = ["backspaces", "home", "menu", "back", "enter", "scroll", \
+    "touch", "drag", "record", "playback", "connect", "kill", \
+    "screenshot", "launch", "getDevice", "getpid", "connectMonkey", "getId", "setId"]
+
 # Add libraries in to path
 try:
     import sys
@@ -44,46 +49,32 @@ except:
     print 'E.g. Mac Terminal : export MOET=/Users/<youruserid>/moet'
     print 'E.g. Windows DOS  : set MOET=C:\moet'
 
-# from androidlib import * will import these methods
-__all__ = ["backspaces", "home", "menu", "back", "enter", "scroll", \
-    "touch", "drag", "record", "playback", "connect", "connectFirstDevice", \
-    "screenshot", "launch", "getDevice"]
 
 def backspaces(num=1):
     """ Enter backspaces """
-    global device
-    if device == '' :
-        connectFirstDevice()
+    connect()
     while num > 0:
         device.press('KEYCODE_DEL', 'DOWN_AND_UP')
         num = num - 1
     
 def home():
     """ Press home key  """
-    global device
-    if device == '' :
-        connectFirstDevice()
+    connect()
     device.press('KEYCODE_HOME', 'DOWN_AND_UP')
 
 def menu():
     """ Press menu key  """
-    global device
-    if device == '' :
-        connectFirstDevice()
+    connect()
     device.press('KEYCODE_MENU', 'DOWN_AND_UP')
 
 def back():
     """ Press back button  """
-    global device
-    if device == '' :
-        connectFirstDevice()
+    connect()
     device.press('KEYCODE_BACK', 'DOWN_AND_UP')
 
 def enter(string=None):
     """ Press enter or enter string  """
-    global device
-    if device == '' :
-        connectFirstDevice()
+    connect()
     if string is None:
         device.press('KEYCODE_ENTER', 'DOWN_AND_UP')
     else:
@@ -99,9 +90,7 @@ def enter(string=None):
 
 def scroll(action='left', num=1):
     """ Press cursor keys (up, down, left, right)  """
-    global device
-    if device == '' :
-        connectFirstDevice()
+    connect()
     keymap = { 'up' : 'KEYCODE_DPAD_UP' , 'down' : 'KEYCODE_DPAD_DOWN' , \
         'left' : 'KEYCODE_DPAD_LEFT' , 'right' : 'KEYCODE_DPAD_RIGHT' }
     if action in ['up', 'down', 'left', 'right']:
@@ -132,7 +121,6 @@ def touch(posX=0, posY=0, action='default'):
         @param posX integer value or % e.g. 50 or 50%
         @param posY integer value or % e.g. 50 or 50%
     """
-    global device
     keymap = { 'default' : 'DOWN_AND_UP', 'up' : 'UP', 'down' : 'DOWN' }
     posX = str(posX)
     posY = str(posY)
@@ -143,8 +131,7 @@ def touch(posX=0, posY=0, action='default'):
         posX = absCoordinates(posX, 'x')
     if posY.endswith('%'):
         posY = absCoordinates(posY, 'y')
-    if device == '' :
-        connectFirstDevice()
+    connect()
     device.touch(int(posX), int(posY), keymap[action])
 
 def drag(fromX=0, fromY=0, toX=0, toY=0):
@@ -153,7 +140,6 @@ def drag(fromX=0, fromY=0, toX=0, toY=0):
         @param posX integer value or % e.g. 50 or 50%
         @param posY integer value or % e.g. 50 or 50%
     """
-    global device
     fromX = str(fromX)
     fromY = str(fromY)
     toX = str(toX)
@@ -166,8 +152,7 @@ def drag(fromX=0, fromY=0, toX=0, toY=0):
         toX = absCoordinates(toX, 'x')
     if toY.endswith('%'):
         toY = absCoordinates(toY, 'y')
-    if device == '' :
-        connectFirstDevice()
+    connect()
     device.drag((int(fromX), int(fromY)), (int(toX), int(toY)), 0.5, 5)
 
 def record(seconds=5, returnResult=False):
@@ -195,7 +180,7 @@ def record(seconds=5, returnResult=False):
         # windows
         # This is for cygwin
         #pscmd='ps -s '
-        os.system('cmd /C taskkill /F /IM adb')
+        os.system('cmd /C taskkill /F /IM getevent')
     else:
         pids = subprocess.Popen(['ps','-A'], stdout=subprocess.PIPE)
         out = pids.communicate()[0].splitlines()
@@ -290,37 +275,101 @@ def playback(events='playbackfile'):
         cmd = cmd + '"'
         os.system(cmd)
         time.sleep(3)
-        
-def connect(serialnum):
-    """ connect to new serialnum """
-    global device
-    global id
-    import time
-    if device != '' :
-        device = ''
-    id = serialnum
-    device = MonkeyRunner.waitForConnection(30, id)
-    print device
+
+def kill(processName):
+    id = getId()
+    if id is None:
+        ADB = 'adb '
+    else:
+        ADB = 'adb -s ' + id
+    cmd = ' shell kill ' + str(getpid(None, processName))
+    os.system(ADB + cmd)
+    time.sleep(1)
+
+def connect(serialnum=None):
+    """ connects to first device or simulator  """
+    device = getDevice()
+    if not serialnum is None:
+        setId(serialnum)
+    if device == '':
+        connectMonkey()
     return device
 
-def connectFirstDevice():
-    """ connects to first device or simulator  """
-    global device
-    global id
-    if (id is None) or (device == ''):
-        # bug in monkeyrunner on the first connection to emulator, the first instance is bogus
-        device = MonkeyRunner.waitForConnection(30)
-        device = MonkeyRunner.waitForConnection(30)
+def getpid(idIn=None, processName='com.android.commands.monkey'):
+    try:
+        import subprocess
+        if idIn is None:
+            id = getId()
+        else:
+            id = idIn
+        if id is None:
+            cmd = 'adb shell ps'
+        else:
+            cmd = 'adb -s ' + id + ' shell ps'
+        result = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        result = result.communicate()[0].splitlines()
+        pid = int(filter(lambda p: len(p) == 9 and p[8] == processName, map(lambda l: l.split(), result))[0][1])
+        #print 'in getpid'
+        #print pid
+        if not pid is None:
+            return pid
+        if id is None:
+            cmd = 'adb start-server'
+        else:
+            cmd = 'adb -s ' + id + ' start-server'
+        subprocess.Popen(cmd , shell=True, stdout=subprocess.PIPE)
+    except:
+        #print 'in getpid except'
+        if id is None:
+            cmdstart = 'adb shell exit'
+        else:
+            cmdstart = 'adb -s ' + id + ' shell exit'
+        subprocess.Popen(cmdstart , shell=True, stdout=subprocess.PIPE)
+        pid = None
+    return pid
+
+def connectMonkey():
+
+    id = getId()
+    device = getDevice()
+    from java.io import File, PrintStream, ByteArrayOutputStream
+    from java.lang import System
+    outFile = ByteArrayOutputStream(100)
+    errFile = ByteArrayOutputStream(100)
+    System.setOut(PrintStream(outFile))
+    System.setErr(PrintStream(errFile))
+
+    # Helps start adb if not started
+    # pid of monkeyrunner only exists starting sdk 2.3
+    pid = getpid()
+    if id is None:
+        device = MonkeyRunner.waitForConnection()
     else:
-        device = MonkeyRunner.waitForConnection(30, id)
+        device = MonkeyRunner.waitForConnection(20, id)
+
+    if pid is None:
+        if outFile.size() > 0:
+            # call connect again
+            if id is None:
+                device = MonkeyRunner.waitForConnection()
+            else:
+                device = MonkeyRunner.waitForConnection(20, id)
     print device
+    # Need 2nd connection calls to get the device 
+    # see defect http://code.google.com/p/android/issues/detail?id=16722 
+    #if id is None:
+    #    device = MonkeyRunner.waitForConnection()
+    #else:
+    #    device = MonkeyRunner.waitForConnection(20, id)
+
+    setDevice(device)
     return device
 
 def screenshot(imagefile='test'):
     """ Takes screenshot of current connection of device or emulator """
-    global device
-    if device == '' :
-        connectFirstDevice()
+    """
+    Comment this out as monkeyrunner has issues for OS 2.2 for screenshots
+    connect()
     image = device.takeSnapshot()
     try:
         import testlib
@@ -335,12 +384,41 @@ def screenshot(imagefile='test'):
         filepath = imagefile + '.png'
         image.writeToFile(filepath, 'png')
         print imagefile + '.png is saved to current directory'
+    """
+    global common
+    serialnum = getId()
+    if not serialnum is None:
+        serialnum = ' -s ' + serialnum + ' '
+    else:
+        serialnum = ''
+    ddmlib=os.path.join(common, 'ddmlib.jar')
+    screenshotjar=os.path.join(common, 'screenshot.jar')
+    if (os.getenv('PATH').find('Program Files')) >= 0:
+        classpath= ddmlib + ";" + screenshotjar
+    else:
+        classpath= ddmlib + ":" + screenshotjar
+    try:
+        import testlib
+        testoutput = testlib.settings.testoutput
+        # create testoutput if does not exists
+        if not os.path.exists(testoutput):
+           os.makedirs(testoutput)
+        imagefullpath = os.path.join(testoutput, imagefile + '.png')
+        cmd= "java -cp '" + classpath + "' com.android.screenshot.Screenshot " + serialnum + imagefullpath
+        import subprocess
+        result = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        print imagefile + '.png is saved to ' + testoutput
+    except:
+        cmd= "java -cp '" + classpath + "' com.android.screenshot.Screenshot " + serialnum + imagefile + '.png'
+        import subprocess
+        result = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        print imagefile + '.png is saved to current directory'
+    # wait for file to be saved
+    time.sleep(1)
 
 def launch(appActivity):
     """ Launch your application """
-    global device
-    if device == '' :
-        connectFirstDevice()
+    connect()
     #device.startActivity(appActivity)
     device.shell(' am start -n ' + appActivity)
 
@@ -373,4 +451,20 @@ def translate(inputString):
 
 def getDevice():
     """ Returns MonkeyDevice """
+    global device
     return device
+
+def setDevice(deviceIn):
+    """ Sets MonkeyDevice """
+    global device
+    device = deviceIn 
+
+def getId():
+    """ Returns Device ID"""
+    global id
+    return id
+
+def setId(idIn):
+    """ Sets MonkeyDevice """
+    global id
+    id = idIn 
