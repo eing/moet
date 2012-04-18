@@ -1,0 +1,41 @@
+///////////////////////////////////////////////////
+
+    MOET - (MO)bile (E)xploratory (T)esting in Java
+
+///////////////////////////////////////////////////
+
+Moet in java contains libraries for mobile simulators - Android, and iPhone.
+i.e. Android.javay (works on physical devices too), and iPhone.java 
+
+Tests are written such that they can be reused and run on Android, and iPhone. 
+This is done by identifying customer use cases such as login, search, create 
+contact etc. and each use case will utilize MOET library controls. 
+Device type is determined at runtime.
+
+Please read the file INSTALL for installation and usage instructions.
+
+NOTE. This is only supported on the Mac for Android and iPhone.
+
+>> Libraries <<
+Create src/resources folder
+
+>> Android <<
+Copy android.jar from $ANDROID_HOME/platforms/android-<sdkversion> to src/resources
++ android.jar 
+Copy following jars from $ANDROID_HOME/tools/lib to src/resources
++ androidprefs.jar
++ ddmlib.jar
++ guavalib.jar
++ jython.jar
++ monkeyrunner.jar
++ sdklib.jar
+
+>> iPhone <<
+Install sikuli from http://sikuli.org/download.shtml and copy following jars
+/Applications/Sikuli-IDE.app/Contents/Resources/Java/
+to src/resources
++ sikuli-script.jar
++ junit.jar
+
+Build iphonesim from https://github.com/jhaynie/iphonesim
++ iphonesim 

@@ -1,0 +1,1 @@
+package com.intuit.moet;/** * Physical keyboard codes * More keycodes can be extracted from  * https://answers.launchpad.net/sikuli/+question/142657 * @author eong * */public class Key {	public static final String BACKSPACE = "\b";	public static final String META = "\ue023";	public static final String SHIFT = "\ue020";}
