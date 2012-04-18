@@ -113,12 +113,12 @@ if [ $MOET_DEVICE = 'android' ]; then
     fi
     ANDROIDLIB=$ANDROIDLIB
     ANDROIDLIB=`echo $ANDROIDLIB | sed -e 's/adb//;s/platform-tools\///'`tools/lib
-    BINDDIR=`echo $ANDROIDLIB | sed -e 's/\/lib//'`
+    BINDIR=`echo $ANDROIDLIB | sed -e 's/\/lib//'`
     if [ $MOET_MODE = 'DEMO' ]; then
-        java -Xmx128M -Djava.ext.dirs=$ANDROIDLIB -Djava.library.path=$ANDROIDLIB -Dcom.android.monkeyrunner.bindir=$BINDDIR -jar $ANDROIDLIB/monkeyrunner.jar
+        java -Xmx128M -Djava.ext.dirs=$ANDROIDLIB -Djava.library.path=$ANDROIDLIB -Dcom.android.monkeyrunner.bindir=$BINDIR -jar $ANDROIDLIB/monkeyrunner.jar
         exit 0
     fi
-    java -Xmx128M -Djava.ext.dirs=$ANDROIDLIB -Djava.library.path=$ANDROIDLIB -Dcom.android.monkeyrunner.bindir=$BINDDIR -jar $ANDROIDLIB/monkeyrunner.jar $TEST
+    java -Xmx128M -Djava.ext.dirs=$ANDROIDLIB -Djava.library.path=$ANDROIDLIB -Dcom.android.monkeyrunner.bindir=$BINDIR -jar $ANDROIDLIB/monkeyrunner.jar $TEST
     exit 0
 fi
 
