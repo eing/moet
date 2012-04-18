@@ -1,30 +1,1 @@
-package com.intuit.moet;
-
-public interface IDevice 
-{	
-	public void cleanup() throws Exception;
-	
-	public void menu();
-	
-	public void home();
-	
-	public void back();
-	
-	public void backspaces(int num);
-	
-	public void enter();
-	public void enter(String inputStr);
-	
-	public void scroll(String direction);
-	public void scroll(String direction, int num);
-	
-	public void touch(int x, int y);
-	public void touch(String x, String y);
-	
-	public void drag(int fromX, int fromY, int toX, int toY);
-	public void drag(String fromX, String fromY, String toX, String toY);	
-	
-	public void launch(String activity);
-	
-	public void screenshot(String filename);
-}
+package com.intuit.moet;import java.io.IOException;/** * Interface that contains common device interactions. * @author eong * */public interface IDevice {			/**	 * Launch application.	 * @param application to launch	 */	public void launch(String app) throws Exception;		/**	 * Terminate application.	 * @param appname application name if applicable	 * @throws Exception exception if clean up fails	 */	public void terminate(String app) throws Exception;		/**	 * Focus device on application	 */	public void focus() ;		/**	 * Clicks on menu key.	 */	public void menu();		/**	 * Clicks on home key.	 */	public void home();		/**	 * Clicks on back key.	 */	public void back();		/**	 * Enter backspaces to delete text.	 * @param num number of backspaces	 */	public void backspaces(int num);		/**	 * Clicks on enter/return on virtual keyboard.	 */ 	public void enter();		/**	 * Enters inputStr into focused field.	 * @param inputStr input string to enter	 */	public void enter(String inputStr);		/**	 * Scroll "up"/"down"/"left"/"right" once.	 * @param direction  "up"/"down"/"left"/"right"	 */	public void scroll(String direction);		/**	 * Scroll "up"/"down"/"left"/"right" multiple number of times.	 * @param direction  "up"/"down"/"left"/"right"	 * @param num number of times to scroll	 */	public void scroll(String direction, int num);		/**	 * Touch on screen at co-ordinates (x, y).	 * @param x x co-ordinate	 * @param y y co-ordinate	 */	public void touch(int x, int y);		/**	 * Touch on screen at co-ordinates ("x%", "y%') of current resolution.	 * @param x x% e.g. "10%" of max horizontal resolution	 * @param y y% e.g. "20%" of max vertical resolution	 */	public void touch(String x, String y);		/**	 * Drag on screen from co-ordinates (fromX, fromY) to (toX, toY).	 * @param fromX start x co-ordinate	 * @param fromY start y co-ordinate	 * @param toX end x co-ordinate	 * @param toY end y co-ordinate	 */	public void drag(int fromX, int fromY, int toX, int toY);		/**	 * Drag on screen from co-ordinates (fromX, fromY) to (toX, toY).	 * @param fromX start x% e.g. "10%" of max horizontal resolution	 * @param fromY start y% e.g. "10%" of max vertical resolution	 * @param toX end x% e.g. "10%" of max horizontal resolution	 * @param toY end y% e.g. "10%" of max vertical resolution	 */	public void drag(String fromX, String fromY, String toX, String toY);			/**	 * Touch image on the screen.	 * @param image image file name	 */	public void touchImage(String image) throws IOException;			/**	 * Takes screenshot and save to filename.	 * @param filename full path to save image to.	 */	public void screenshot(String filename);		/**	 * Returns text content on current device (aka OCR).	 */	public String getText();			/**	 * Returns text content on current device (aka OCR) all lower case and trimmed.	 * @param removeSpaces this will remove spaces from the screen text in addition	 *        to lowercase and trimmed. 	 */	public String getText(boolean removeSpaces);		/**	 * Set the picker scroller at column down or up (negative scroll).	 * @param column column to scroll	 * @param scroll number of scrolls, positive for scrolling down	 */	public void pickerScroll(int column, int scroll);		/**	 * Returns env settings.	 */	public Settings getSettings();		/** 	 * Retrieves log.	 * @return string from application logs	 */	public String getLog();	/** 	 * Flushes log after saving it to logger.	 */	public void saveLog();		/** 	 * Clear log.	 */	public void clearLog();		/**	 * This is to reset log file handler with every test as	 * they are moved to a different directory after each test completion.	 * Log file is charles.log (iPhone) and adb.log (Android).	 * @throws IOException file not found exception	 */	public void resetLogFileHandler() throws IOException;}

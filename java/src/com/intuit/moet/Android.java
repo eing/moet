@@ -1,294 +1,1 @@
-package com.intuit.moet;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-
-import com.android.monkeyrunner.MonkeyDevice.TouchPressType;
-import com.android.monkeyrunner.MonkeyImage;
-import com.android.monkeyrunner.MonkeyManager;
-import com.android.monkeyrunner.adb.AdbBackend;
-import com.android.monkeyrunner.adb.AdbMonkeyDevice;
-
-public class Android implements IDevice
-{
-
-	private static final String KEYCODE_MENU = "KEYCODE_MENU";
-	private static final String KEYCODE_HOME = "KEYCODE_HOME";
-	private static final String KEYCODE_DEL = "KEYCODE_DEL";
-	private static final String KEYCODE_BACK = "KEYCODE_BACK";
-	private static final String KEYCODE_ENTER = "KEYCODE_ENTER";
-	private static final String KEYCODE_SPACE = "KEYCODE_SPACE";
-	private static final String KEYCODE_UP = "KEYCODE_DPAD_UP";
-	private static final String KEYCODE_DOWN = "KEYCODE_DPAD_DOWN";
-	private static final String KEYCODE_LEFT = "KEYCODE_DPAD_LEFT";
-	private static final String KEYCODE_RIGHT = "KEYCODE_DPAD_RIGHT";
-
-	public static AdbBackend adbConn = null;
-	public static AdbMonkeyDevice device = null;
-	public MonkeyImage image;
-	public Settings settings;
-	public static String adbLogfile;
-	
-	private static final Logger LOG = Logger.getLogger(Settings.class.getName());
-
-	public Android(Settings settings)
-	{
-		this.settings = settings;
-		Logger MonkeyLog = Logger.getLogger(MonkeyManager.class.getName());
-
-		if (!this.settings.log.contains("on"))
-			MonkeyLog.setLevel(Level.SEVERE);
-
-		Logger adbLog = Logger.getLogger(AdbMonkeyDevice.class.getName());
-		adbLogfile = this.settings.actualDir + "adb.log";
-		BufferedReader bufferedFile = null;
-
-		try
-		{
-			Handler handler = new FileHandler(adbLogfile);
-			adbLog.setUseParentHandlers(false);
-			MonkeyLog.setUseParentHandlers(false);
-			handler.setFormatter(new SimpleFormatter());
-		    adbLog.addHandler(handler);
-			MonkeyLog.addHandler(handler);
-			
-			if (adbConn == null)
-				adbConn = new AdbBackend();
-			
-			if (device == null) 
-			{
-				if (settings.deviceId != null)
-				{
-					LOG.info("Establishing connection to "+ settings.deviceId);
-					device = (AdbMonkeyDevice) adbConn.waitForConnection(10000, settings.deviceId);
-				}
-				else
-				{
-					device = (AdbMonkeyDevice) adbConn.waitForConnection();		
-				}
-
-				boolean reconnect = false;
-
-				// Adding sleep for File IO to capture the logs from adb
-				Thread.sleep(Settings.SLEEP_INTERVAL * 2);
-				bufferedFile = new BufferedReader(new FileReader(adbLogfile));
-				String line;
-				while ( !reconnect && (line = bufferedFile.readLine()) != null )
-				{
-					if (line.indexOf("ShellCommandUnresponsiveException") > 0)
-						reconnect = true;
-				}
-				if (reconnect)
-				{
-					LOG.info("!! -- ATTEMPTING TO RECONNECT TO ADB --  !! ");
-					if (settings.deviceId != null)
-						device = (AdbMonkeyDevice) adbConn.waitForConnection(10000, settings.deviceId);
-					else
-						device = (AdbMonkeyDevice) adbConn.waitForConnection();				
-				}
-			}
-		}
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			try 
-			{ 
-				bufferedFile.close(); 
-				adbLog = null;
-			} 
-			catch(Exception e) { /* ignore */ }  
-		}
-	}
-	
-	public void cleanup() throws Exception
-	{
-		adbConn.shutdown();
-	}
-
-	public void menu()
-	{
-		try 
-		{
-			device.press(KEYCODE_MENU, TouchPressType.DOWN_AND_UP);
-			Thread.sleep(2000);
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	public void home()
-	{
-		device.press(KEYCODE_HOME, TouchPressType.DOWN_AND_UP);
-	}
-
-	public void back()
-	{
-		device.press(KEYCODE_BACK, TouchPressType.DOWN_AND_UP);
-	}
-
-
-	public void backspaces(int num)
-	{
-		while (num > 0)
-		{
-			device.press(KEYCODE_DEL, TouchPressType.DOWN_AND_UP);
-			num--;
-		}
-	}
-
-	public void enter() 
-	{
-		try 
-		{
-			device.press(KEYCODE_ENTER, TouchPressType.DOWN_AND_UP);
-			Thread.sleep(500);
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	public void enter(String inputStr)
-	{
-		if (inputStr == null)
-			this.enter();
-		else
-		{
-			String[] strList = inputStr.split(" ");
-			int strLen = strList.length;
-			device.type(strList[0]);
-			for (int index = 1;  index < strLen; index++)
-			{
-				device.press(KEYCODE_SPACE, TouchPressType.DOWN_AND_UP);
-				device.type(strList[index]);
-			}
-		}
-
-	}
-
-	public void scroll(String direction)
-	{
-		scroll(direction, 1);
-	}
-
-	public void scroll(String direction, int num)
-	{
-		try 
-		{
-			String key;
-			if (direction.contains("up"))
-				key = KEYCODE_UP;
-			else if (direction.contains("down"))
-				key = KEYCODE_DOWN;
-			else if (direction.contains("left"))
-				key = KEYCODE_LEFT;
-			else if (direction.contains("right"))
-				key = KEYCODE_RIGHT;
-			else	   
-			{
-				LOG.severe("Invalid direction for scroll");
-				return;
-			}
-			while (num > 0)
-			{
-				device.press(key, TouchPressType.DOWN_AND_UP);
-				num--;
-			}
-			Thread.sleep(200);
-		}
-		catch(InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	private int absCoordinates(String percentCoord, String type)
-	{
-		int coordValue = 0;
-		int resolution = 0;
-
-		if (percentCoord.endsWith("%"))
-		{
-			coordValue = Integer.parseInt(percentCoord.substring(0, percentCoord.length() - 1));
-			if (this.settings.resolution != null)
-			{
-				if (type.contains("x"))					
-					resolution = this.settings.resX;
-				else
-					resolution = this.settings.resY;
-			}
-			else
-			{
-				if (type.contains("x"))
-					resolution = 480;
-				else
-					resolution = 800;
-			}		
-			return (coordValue * resolution) / 100;
-
-		}
-		else
-			return coordValue;
-	}
-
-	public void touch(int x, int y)
-	{
-		LOG.info("Tapping on screen at (" + x + ", " + y + ")");
-		device.touch(x, y, TouchPressType.DOWN_AND_UP);
-	}
-
-	public void touch(String x, String y)
-	{
-		int xInt = absCoordinates(x, "x");
-		int yInt = absCoordinates(y, "y");
-		this.touch(xInt, yInt);
-	}
-
-	public void drag(int fromX, int fromY, int toX, int toY)
-	{
-		device.drag(fromX, fromY, toX, toY, 1, 5);
-	}
-
-	public void drag(String fromX, String fromY, String toX, String toY)
-	{
-		try 
-		{
-			int fromXInt = absCoordinates(fromX, "x");
-			int fromYInt = absCoordinates(fromY, "y");
-			int toXInt = absCoordinates(toX, "x");
-			int toYInt = absCoordinates(toY, "y");
-			LOG.info("Dragging from (" + fromXInt + ", " + fromYInt + ") to (" + toXInt + ", " + toYInt + ")");
-			device.drag(fromXInt, fromYInt, toXInt, toYInt, 1, 5);
-			Thread.sleep(1000);
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	public void launch(String activity)
-	{
-		LOG.info("Launching activity - " + activity);
-		device.shell(" am start -n " + activity);
-	}
-
-	public void screenshot(String filename)
-	{
-		image = device.takeSnapshot();
-		filename = this.settings.actualDir + filename + ".png";
-		//LOG.info("Saving file to " + filename);
-		image.writeToFile(filename, "png");
-	}
-}
+package com.intuit.moet;import java.io.BufferedReader;import java.io.File;import java.io.FileReader;import java.io.IOException;import java.util.logging.FileHandler;import java.util.logging.Handler;import java.util.logging.Level;import java.util.logging.Logger;import java.util.logging.SimpleFormatter;import org.sikuli.script.ImageLocator;import com.android.monkeyrunner.MonkeyDevice.TouchPressType;import com.android.monkeyrunner.MonkeyImage;import com.android.monkeyrunner.MonkeyManager;import com.android.monkeyrunner.adb.AdbBackend;import com.android.monkeyrunner.adb.AdbMonkeyDevice;/** * This class consists of library methods for Android device or emulator. * It utilizes Android MonkeyRunner APIs that comes with Android SDK. * There is a known defect that if you start a fresh emulator/device,  * the first connection is iffy and you just have to kill your test and * run again. Pls vote to get Google to fix this defect - * http://code.google.com/p/android/issues/detail?id=16722. *  * @author eong * */public class Android implements IDevice{	/** 	 * MonkeyRunner fields	 */	public static AdbBackend adbConn = null;	public static AdbMonkeyDevice device = null;	public MonkeyImage image;	public static String adbLogfile = null;		/**	 * These strings are low level keys that ADB (Android	 * Debug Bridge) understands.	 */	private static final String KEYCODE_MENU = "KEYCODE_MENU";	private static final String KEYCODE_HOME = "KEYCODE_HOME";	private static final String KEYCODE_DEL = "KEYCODE_DEL";	private static final String KEYCODE_BACK = "KEYCODE_BACK";	private static final String KEYCODE_ENTER = "KEYCODE_ENTER";	private static final String KEYCODE_SPACE = "KEYCODE_SPACE";	private static final String KEYCODE_UP = "KEYCODE_DPAD_UP";	private static final String KEYCODE_DOWN = "KEYCODE_DPAD_DOWN";	private static final String KEYCODE_LEFT = "KEYCODE_DPAD_LEFT";	private static final String KEYCODE_RIGHT = "KEYCODE_DPAD_RIGHT";		private static final Logger LOG = Logger.getLogger(Settings.class.getName());	private static Logger adbLogger = null;	private static Handler handler; 	private static String adbLog = null;		/** 	 * Sikuli fields 	 */	public Settings settings;	/**	 * Location of where all images are stored.	 */	public static String imagePath = "resources" + File.separator +  "android" + File.separator;	private boolean checkReconnect() throws Exception	{		boolean reconnect = false;				BufferedReader bufferedFile = null;		// Initialize log for monkey runner		Logger MonkeyLog = Logger.getLogger(MonkeyManager.class.getName());		MonkeyLog.setUseParentHandlers(false);		MonkeyLog.addHandler(handler);		MonkeyLog.setLevel(Level.SEVERE);				if (device == null) 		{			if (settings.deviceId == null)			{				LOG.info("Establishing connection to Android");				device = (AdbMonkeyDevice) adbConn.waitForConnection();			}			else			{				LOG.info("Establishing connection to "+ settings.deviceId);				device = (AdbMonkeyDevice) adbConn.waitForConnection(10000, settings.deviceId);			}		}				// Adding sleep for File IO to capture the logs from adb		Thread.sleep(Settings.SLEEP_INTERVAL * 2);		bufferedFile = new BufferedReader(new FileReader(adbLogfile));		String line;		while ( !reconnect && (line = bufferedFile.readLine()) != null )		{			LOG.info(line);			if (line.indexOf("ShellCommandUnresponsiveException") > 0)			{				reconnect = true;			}		}		bufferedFile.close();		return reconnect;	}		/**	 * This is to reset log file handler with every test as	 * they are moved to a different directory after each test completion.	 * Log file is charles.log (iPhone) and adb.log (Android).	 * @throws IOException file not found exception	 */	public void resetLogFileHandler() throws IOException	{		if (handler != null)		{			adbLogger.removeHandler(handler);			handler.close();			handler = null;		}	    handler = new FileHandler(adbLogfile, true);	    handler.setFormatter(new SimpleFormatter());		adbLogger.addHandler(handler);	}		/**	 * Instantiates ADB connection and logger.	 * @param settings Settings include resolution, output directories etc.	 */	public Android(Settings settings) throws Exception	{				this.settings = settings;		boolean reconnect = true;		if (adbConn == null)			adbConn = new AdbBackend();		// Set up ADB log file		adbLogfile = this.settings.actualDir + "device.log";		if (adbLogger == null)		{			adbLogger = Logger.getLogger(AdbMonkeyDevice.class.getName());		}		adbLogger.setUseParentHandlers(false);		this.resetLogFileHandler();		int tries = 3;		while (reconnect && (tries > 0))		{			if (tries != 3)				LOG.info("!! -- ATTEMPTING TO RECONNECT TO ADB --  !! ");			reconnect = checkReconnect();				tries--;		}		// Wake up the device, no-op if device is already active		device.wake();		/**		 *  Setup for Sikuli - images path		 */			ImageLocator.addImagePath(imagePath);		ImageLocator.addImagePath(imagePath + settings.resolution);	}			/**	 * Launch activity.	 * @param activity Activity to launch	 */	public void launch(String activity) throws Exception	{		LOG.info("Launching activity - " + activity);		device.shell(" am start -n " + activity);	}		/**	 * Terminate application.	 * @param package name to terminate	 */	public void terminate(String activity) throws Exception	{			LOG.info("Killing application of activity - " + activity);		if (activity == null)			return;		String[] packageName = activity.split("/");		if (packageName.length >= 1)		{			String processInfo = device.shell("ps");			int endIndex = processInfo.indexOf(packageName[0]);			if (endIndex > 0)			{				String[] subProcessInfoList = 					processInfo.substring(endIndex - 100, endIndex + packageName[0].length()).split("\n");				if (subProcessInfoList.length <= 1 )					return;				String pid = subProcessInfoList[1].split("\\p{Blank}+")[1];				device.shell("kill " + pid);				LOG.info("Killing app name - " + packageName[0] + " of pid " + pid);				Thread.sleep(2000);			}			else				LOG.info("Terminate app command was not executed - " + activity + " is not running");		}	}		/**	 * Focus device on application	 */	public void focus() 	{		device.wake();	}	/**	 * Clicks on the menu key.	 */	public void menu()	{		try 		{			device.press(KEYCODE_MENU, TouchPressType.DOWN_AND_UP);			Thread.sleep(2000);		}		catch (InterruptedException e)		{			e.printStackTrace();		}	}	/**	 * Clicks on the home key.	 */	public void home()	{		device.press(KEYCODE_HOME, TouchPressType.DOWN_AND_UP);	}	/**	 * Clicks on the back/return to previous screen.	 */	public void back()	{		device.press(KEYCODE_BACK, TouchPressType.DOWN_AND_UP);	}	/**	 * Enter backspaces to delete text.	 * @param num number of backspaces	 */	public void backspaces(int num)	{		try		{			while (num > 0)			{				device.press(KEYCODE_DEL, TouchPressType.DOWN_AND_UP);				num--;			}			Thread.sleep(500);		}		catch (InterruptedException e)		{			e.printStackTrace();		}	}	/**	 * Clicks on enter/return.	 */	public void enter() 	{		try 		{			device.press(KEYCODE_ENTER, TouchPressType.DOWN_AND_UP);			Thread.sleep(500);		}		catch (InterruptedException e)		{			e.printStackTrace();		}	}	/**	 * Enters inputStr into focused field.	 * @param inputStr input string to enter	 */	public void enter(String inputStr)	{		try 		{			if ((inputStr == null))			{				this.enter();			}			else if (inputStr.length() == 0 ) 				Thread.sleep(500);			else			{				String[] strList = inputStr.split(" ");				int strLen = strList.length;				device.type(strList[0]);				for (int index = 1;  index < strLen; index++)				{					device.press(KEYCODE_SPACE, TouchPressType.DOWN_AND_UP);					device.type(strList[index]);				}			}			Thread.sleep(500);		}		catch (InterruptedException e)		{			e.printStackTrace();		}	}	/**	 * Scroll "up"/"down"/"left"/"right" once.	 * @param direction  "up"/"down"/"left"/"right"	 */	public void scroll(String direction)	{		scroll(direction, 1);	}	/**	 * Scroll "up"/"down"/"left"/"right" multiple number of times.	 * @param direction  "up"/"down"/"left"/"right"	 * @param num number of times to scroll	 */	public void scroll(String direction, int num)	{		try 		{			String key;			if (direction.contains("up"))				key = KEYCODE_UP;			else if (direction.contains("down"))				key = KEYCODE_DOWN;			else if (direction.contains("left"))				key = KEYCODE_LEFT;			else if (direction.contains("right"))				key = KEYCODE_RIGHT;			else	   			{				LOG.severe("Invalid direction for scroll");				return;			}			while (num > 0)			{				device.press(key, TouchPressType.DOWN_AND_UP);				num--;			}			Thread.sleep(500);		}		catch(InterruptedException e)		{			e.printStackTrace();		}	}	/**	 * Touch on screen at co-ordinates (x, y).	 * @param x x co-ordinate	 * @param y y co-ordinate	 */	public void touch(int x, int y)	{		try		{			LOG.info("Tapping on screen at (" + x + ", " + y + ")");			device.touch(x, y, TouchPressType.DOWN_AND_UP);			Thread.sleep(500);		}		catch (InterruptedException e)		{			e.printStackTrace();		}	}	/**	 * Touch on screen at co-ordinates ("x%", "y%') of current resolution.	 * @param x x% e.g. "10%" of max horizontal resolution	 * @param y y% e.g. "20%" of max vertical resolution	 */	public void touch(String x, String y)	{		try		{			int xInt = Util.absCoordinates(x, "x", this.settings);			int yInt = Util.absCoordinates(y, "y", this.settings);			this.touch(xInt, yInt);			Thread.sleep(500);		}		catch (InterruptedException e)		{			e.printStackTrace();		}	}	/**	 * Drag on screen from co-ordinates (fromX, fromY) to (toX, toY).	 * @param fromX start x co-ordinate	 * @param fromY start y co-ordinate	 * @param toX end x co-ordinate	 * @param toY end y co-ordinate	 */	public void drag(int fromX, int fromY, int toX, int toY)	{		device.drag(fromX, fromY, toX, toY, 1, 5);	}	/**	 * Drag on screen from co-ordinates (fromX, fromY) to (toX, toY).	 * @param fromX start x% e.g. "10%" of max horizontal resolution	 * @param fromY start y% e.g. "10%" of max vertical resolution	 * @param toX end x% e.g. "10%" of max horizontal resolution	 * @param toY end y% e.g. "10%" of max vertical resolution	 */	public void drag(String fromX, String fromY, String toX, String toY)	{		try 		{			int fromXInt = Util.absCoordinates(fromX, "x", this.settings);			int fromYInt = Util.absCoordinates(fromY, "y", this.settings);			int toXInt = Util.absCoordinates(toX, "x", this.settings);			int toYInt = Util.absCoordinates(toY, "y", this.settings);			LOG.info("Dragging from (" + fromXInt + ", " + fromYInt + ") to (" + toXInt + ", " + toYInt + ")");			device.drag(fromXInt, fromYInt, toXInt, toYInt, 1, 5);			Thread.sleep(1000);		}		catch (InterruptedException e)		{			e.printStackTrace();		}	}		/**	 * Using Sikuli to touch image on emulator or device if using screencast/VNC.	 */	public void touchImage(String image) throws IOException	{		try		{			if (image == null)				return;			image = image.toLowerCase();			LOG.info("Pressing key " + image);			this.focus();				String filename = "touchImageTmp.png";			this.screenshot(filename);			filename = this.settings.actualDir + filename;			boolean result = ImageKit.find(this, filename, image, true);			if (!result)				LOG.info(this.getText());			else				Thread.sleep(500);		}		catch (InterruptedException e)		{			e.printStackTrace();		}	}	/**	 * Takes screenshot and save to filename.	 * @param filename full path to save image to.	 */	public void screenshot(String filename)	{		image = device.takeSnapshot();		filename = this.settings.actualDir + filename;				if (!filename.contains(".png"))			filename = filename + ".png";		//LOG.info("Saving file to " + filename);		image.writeToFile(filename, "png");	}		/**	 * Returns text content on current device (aka OCR).	 */	public String getText()			{		try		{			String filename = "getText.png";			this.screenshot(filename);			filename = this.settings.actualDir + filename;			return ImageKit.getText(filename, false);		}		catch (Exception e)		{			e.printStackTrace();			return null;		}	}		/**	 * Returns text content on current device (aka OCR) all lower case and trimmed.	 * @param removeSpaces this will remove spaces from the screen text in addition	 *        to lowercase and trimmed. 	 */	public String getText(boolean removeSpaces)	{		String text = this.getText();		if (text != null)			return text.toLowerCase().replaceAll(" ","");		else			return text;	}		/**	 * Currently NOT implemented.	 */	public void pickerScroll(int column, int scroll) { return;  }		/**	 * Returns env settings.	 */	public Settings getSettings()	{		return this.settings;	}	protected void finalize() throws Throwable	{		if (handler != null)			handler.close();		super.finalize();   	}		/** 	 * Retrieves log.	 * @return string from adb logcat	 */	public String getLog()	{		if ( (adbLog == null) && this.settings.log.contains("on") )			adbLog = device.shell("logcat -d SntpClient:S KeyCharacterMap:S Resources:S *:E");		return adbLog;	}		/** 	 * Flushes log after saving it to logger.	 */	public void saveLog()	{		adbLogger.info(getLog());		clearLog();	}		/** 	 * Clear log.	 */	public void clearLog()	{		device.shell("logcat -c");		adbLog = null;	}}

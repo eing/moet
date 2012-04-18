@@ -1,71 +1,1 @@
-package com.intuit.moet;
-
-public class ImageObject 
-{
-	public static final String defaultCrop = "100%x100%+0%+6%";
-	public String filename;
-	public String fileToCompare = null;
-	public String crop = defaultCrop;
-	public int tolerance = ImageKit.tolerance;
-	public int tries = 1;
-	
-	public ImageObject(String image, String crop, int tolerance, int tries)
-	{
-		this.filename = image;
-		this.crop = crop;
-		this.tolerance = tolerance;
-		this.tries = tries;
-	}
-	
-	public ImageObject(String image, String crop, int tolerance)
-	{
-		this.filename = image;
-		this.crop = crop;
-		this.tolerance = tolerance;
-	}
-	
-	public ImageObject(String image, String crop)
-	{
-		this.filename = image;
-		this.crop = crop;
-	}
-	
-	public ImageObject(String image)
-	{
-		this.filename = image;
-	}
-	
-	public ImageObject() {}
-	
-	public void setImageObject(String filename)
-	{
-		this.filename = filename;
-		this.crop = defaultCrop;
-		this.tries = 1;
-		this.tolerance = ImageKit.tolerance;
-	}
-	
-	public void setImageObject(String filename, String crop)
-	{
-		this.filename = filename;
-		this.crop = crop;
-		this.tries = 1;
-		this.tolerance = ImageKit.tolerance;
-	}
-	
-	public void setImageObject(String filename, String crop, int tries)
-	{
-		this.filename = filename;
-		this.crop = crop;
-		this.tries = tries;
-		this.tolerance = ImageKit.tolerance;
-	}
-	
-	public void setImageObject(String filename, String crop, int tolerance, int tries)
-	{
-		this.filename = filename;
-		this.crop = crop;
-		this.tries = tries;
-		this.tolerance = tolerance;
-	}
-}
+package com.intuit.moet;/** * Image object to be passed to ImageKit to contain filename, crop setting, tolerance * and number of tries to compare. * @author eong * */public class ImageObject {	public static final String defaultCrop = "100%x100%+0%+6%";	public String filename;	public String fileToCompare = null;	public String crop = defaultCrop;	public int tolerance = ImageKit.tolerance;	public int tries = 1;		/**	 * Instantiate image object with all parameters.	 * @param image image name	 * @param crop crop setting	 * @param tolerance tolerance to pass/fail	 * @param tries number of retries to execute	 */	public ImageObject(String image, String crop, int tolerance, int tries)	{		this.filename = image;		this.crop = crop;		this.tolerance = tolerance;		this.tries = tries;	}		/**	 * Instantiate image object with some parameters.	 * @param image image name	 * @param crop crop setting	 * @param tolerance tolerance to pass/fail	 */	public ImageObject(String image, String crop, int tolerance)	{		this.filename = image;		this.crop = crop;		this.tolerance = tolerance;	}		/**	 * Instantiate image object with only image name and crop setting.	 * @param image image name	 * @param crop crop setting	 */	public ImageObject(String image, String crop)	{		this.filename = image;		this.crop = crop;	}		/**	 * Instantiate image object with only image name.	 * @param image image name	 */	public ImageObject(String image)	{		this.filename = image;	}		/**	 * Default constructor.	 */	public ImageObject() {}		/**	 * Set image name.	 * @param filename name of image filename	 */	public void setImageObject(String filename)	{		this.filename = filename;		this.crop = defaultCrop;		this.tries = 1;		this.tolerance = ImageKit.tolerance;	}		/**	 * Set image name and crop.	 * @param filename name of image filename	 * @param crop crop setting	 */	public void setImageObject(String filename, String crop)	{		this.filename = filename;		this.crop = crop;		this.tries = 1;		this.tolerance = ImageKit.tolerance;	}		/**	 * Set image name, crop, number of tries.	 * @param filename name of image filename	 * @param crop crop setting	 * @param tries number of retries	 */	public void setImageObject(String filename, String crop, int tries)	{		this.filename = filename;		this.crop = crop;		this.tries = tries;		this.tolerance = ImageKit.tolerance;	}		/**	 * Set image name, crop, tolerance, and number of tries.	 * @param filename name of image filename	 * @param crop crop setting	 * @param tolerance tolerance to pass/fail	 * @param tries number of retries	 */	public void setImageObject(String filename, String crop, int tolerance, int tries)	{		this.filename = filename;		this.crop = crop;		this.tries = tries;		this.tolerance = tolerance;	}}
